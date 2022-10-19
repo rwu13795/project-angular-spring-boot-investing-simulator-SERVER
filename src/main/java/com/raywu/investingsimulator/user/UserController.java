@@ -3,6 +3,7 @@ package com.raywu.investingsimulator.user;
 import com.raywu.investingsimulator.user.User;
 import com.raywu.investingsimulator.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,13 +16,17 @@ public class UserController {
 
     // inject employee service
     private final UserService userService;
-//    private final PostApiService postApiService;
+    private final Environment env;
+    private final String FMP_API_KEY;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, Environment env) {
         this.userService = userService;
+        this.env = env;
+        // the local env variables are set inside the intellij
+        // run -> edit configuration
+        this.FMP_API_KEY = this.env.getProperty("FMP_API_KEY");
     }
-
 
     @GetMapping("/users")
     public List<User> findAll() {
@@ -113,6 +118,8 @@ public class UserController {
     // test the filtered page
     @GetMapping("/secret-page")
     public String filteredPage() {
+
+        System.out.println("API_KEY " + FMP_API_KEY);
 
         return "you passed the filter !";
     }
