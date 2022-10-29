@@ -1,4 +1,4 @@
-package com.raywu.investingsimulator.news;
+package com.raywu.investingsimulator.stock.news;
 
 import com.raywu.investingsimulator.utility.EnvVariable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +23,14 @@ public class NewsService {
                 .build();
     }
 
-    String fetchNews(String symbol) {
+    String fetchNews(String symbol, String limit) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/stock_news")
+                        .path("/v3/stock_news")
                         // ----- (1) ----- //
                         .queryParam("tickers", symbol)
                         .queryParam("page", 0)
-                        .queryParam("limit", 100)
+                        .queryParam("limit", limit)
                         .queryParam("apikey", FMP_API_KEY)
                         .build())
                 .retrieve()

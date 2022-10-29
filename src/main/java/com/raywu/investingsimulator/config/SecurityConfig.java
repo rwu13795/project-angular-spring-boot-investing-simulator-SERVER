@@ -9,22 +9,21 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 @Configuration
 public class SecurityConfig {
-
     @Autowired
     private JWTFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                // the filter will check some route path that matches the patterns
-                .addFilterBefore(jwtFilter, BasicAuthenticationFilter.class)
-                // if the filter does not forbidden the request, then process the request
-                .authorizeHttpRequests((auth) ->
-                        auth.anyRequest().permitAll()
-                )
+        http.httpBasic().disable()
+            // the filter will check some route path that matches the patterns
+            .addFilterBefore(jwtFilter, BasicAuthenticationFilter.class)
+            // if the filter does not forbid the request, then process the request
+            .authorizeHttpRequests((auth) ->
+                    auth.anyRequest().permitAll()
+            )
 //        .cors().disable()
-                .httpBasic().disable()
-                .exceptionHandling();
+            .csrf().disable()
+            .exceptionHandling();
 
         return http.build();
     }

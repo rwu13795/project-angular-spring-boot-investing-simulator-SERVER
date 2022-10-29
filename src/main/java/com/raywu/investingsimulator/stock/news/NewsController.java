@@ -1,13 +1,10 @@
-package com.raywu.investingsimulator.news;
-
+package com.raywu.investingsimulator.stock.news;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/news")
+@RequestMapping("/api/stock/news")
 @CrossOrigin(origins = "http://localhost:4200")
 public class NewsController {
 
@@ -18,10 +15,10 @@ public class NewsController {
         this.newsService = newsService;
     }
 
-    @GetMapping("/fetch-news")
-    public String fetchNews(@RequestParam String symbol) {
+    @GetMapping("")
+    public String fetchNews(@RequestParam String symbol, @RequestParam String limit) {
 
         // Spring will automatically use Jackson to convert the employee object into JSON
-        return newsService.fetchNews(symbol);
+        return newsService.fetchNews(symbol, limit);
     }
 }
