@@ -49,13 +49,22 @@ public class StockService {
                 .bodyToMono(String.class)
                 .block();
     }
-
     String fetchFinancialStatement(String symbol, String type, String period, int limit) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v3/" + type + "/" + symbol)
                         .queryParam("period", period)
                         .queryParam("limit", limit)
+                        .queryParam("apikey", FMP_API_KEY)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
+    String fetchCompanyProfile(String symbol) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v3/profile/" + symbol)
                         .queryParam("apikey", FMP_API_KEY)
                         .build())
                 .retrieve()

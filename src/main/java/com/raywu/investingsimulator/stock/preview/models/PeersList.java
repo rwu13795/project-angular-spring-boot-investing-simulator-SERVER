@@ -8,9 +8,7 @@ import java.util.List;
 public class PeersList {
     private String symbol;
     private List<String> peersList;
-
     public PeersList() {}
-
     public PeersList(String symbol, List<String> peersList) {
         this.symbol = symbol;
         this.peersList = peersList;

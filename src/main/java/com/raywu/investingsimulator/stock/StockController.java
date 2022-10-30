@@ -31,4 +31,10 @@ public class StockController {
 
         return stockService.fetchFinancialStatement(symbol, type, period, limit);
     }
+
+    @GetMapping("/profile")
+    public String fetchFinancialStatement(@RequestParam String symbol) {
+
+        return stockService.fetchCompanyProfile(symbol);
+    }
 }
