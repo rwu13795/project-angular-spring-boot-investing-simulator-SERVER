@@ -51,7 +51,7 @@ public class PreviewService {
         return this.fetchPeersInfo(StringUtils.join(list[0].getPeersList(), ','));
     }
 
-    String fetchPeersInfo(String symbolList) {
+    private String fetchPeersInfo(String symbolList) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                     .path("/v3/quote/" + symbolList)

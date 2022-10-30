@@ -1,4 +1,4 @@
-package com.raywu.investingsimulator.stock.news;
+package com.raywu.investingsimulator.stock;
 
 import com.raywu.investingsimulator.utility.EnvVariable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
-public class NewsService {
+public class StockService {
     private final WebClient webClient;
     private final String FMP_API_KEY;
 
     @Autowired
-    public NewsService(WebClient.Builder webClientBuilder, EnvVariable env) {
+    public StockService(WebClient.Builder webClientBuilder, EnvVariable env) {
         String FMP_API_URL = env.FMP_API_URL();
         this.FMP_API_KEY = env.FMP_API_KEY();
 
@@ -22,7 +22,6 @@ public class NewsService {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
-
     String fetchNews(String symbol, String limit) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -37,7 +36,34 @@ public class NewsService {
                 .bodyToMono(String.class)
                 .block();
     }
+    String searchStock(String query, String exchange) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v3/search")
+                        .queryParam("query", query)
+                        .queryParam("exchange", exchange)
+                        .queryParam("limit", 20)
+                        .queryParam("apikey", FMP_API_KEY)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
+
+    String fetchFinancialStatement(String symbol, String type, String period, int limit) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v3/" + type + "/" + symbol)
+                        .queryParam("period", period)
+                        .queryParam("limit", limit)
+                        .queryParam("apikey", FMP_API_KEY)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
 }
+
 
 /*
 ----- (1) -----
@@ -53,5 +79,9 @@ the next page from the server
 
 PS: I did not implement the "fetch next page", since 100 news are more than enough,
 I don't think someone will scroll all the way down to bottom
+
+
+
+
 
 * */
