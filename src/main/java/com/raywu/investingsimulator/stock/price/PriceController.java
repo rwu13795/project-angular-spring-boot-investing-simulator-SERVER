@@ -1,7 +1,6 @@
 package com.raywu.investingsimulator.stock.price;
 
-import com.raywu.investingsimulator.stock.price.models.PriceHistory;
-import com.raywu.investingsimulator.stock.price.models.PriceHistoryList;
+import com.raywu.investingsimulator.stock.price.dto.PriceHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

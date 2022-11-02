@@ -1,21 +1,17 @@
 package com.raywu.investingsimulator.exception;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Setter
-@Getter
+@Data
 public class ErrorResponse {
     private int status;
     private String message;
     private long timeStamp;
-
+    private String field;
     public ErrorResponse() {}
 
-    public ErrorResponse(int status, String message, long timeStamp) {
-        this.status = status;
-        this.message = message;
-        this.timeStamp = timeStamp;
+    public enum ErrorField {
+        password, email, confirmPassword
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 public class StockController {
 
     @Autowired
-    private  StockService stockService;
+    private StockService_impl stockService;
 
     @GetMapping("/news")
     public String fetchNews(@RequestParam String symbol, @RequestParam String limit) {
@@ -33,7 +33,7 @@ public class StockController {
     }
 
     @GetMapping("/profile")
-    public String fetchFinancialStatement(@RequestParam String symbol) {
+    public String fetchCompanyProfile(@RequestParam String symbol) {
 
         return stockService.fetchCompanyProfile(symbol);
     }

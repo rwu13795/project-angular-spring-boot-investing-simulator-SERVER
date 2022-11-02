@@ -52,6 +52,9 @@ public class JWTFilter extends OncePerRequestFilter {
             throw new RuntimeException(e);
         }
 
+        // ----- (1) ----- //
+        request.setAttribute("JWT","setAttribute-testing-text");
+
         if(!query.get("abc")[0].equals("xyz")) {
 
             // custom exception handler
@@ -68,3 +71,39 @@ public class JWTFilter extends OncePerRequestFilter {
         return !path.startsWith("/api/secret-page");
     }
 }
+
+/*
+// ----- (1) ----- //
+After validating the JWT and extract the email and user_id from the JWT, I can put this data
+inside the "request" (the same as Node middleware), and pass this data to the controller
+
+For example, the JWT filter is applied on the "/portfolio" route, I can check the JWT and extract
+the user's info, then pass to the portfolio controller.
+
+If the JWT is not valid, just respond with
+    response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid JWT")
+here in the filter. So that the portfolio controller won't be reached with an invalid JWT
+
+If the JWT is valid, I can get the user's data by using request.getAttribute()
+in the controller, and fetch the portfolio detail
+
+
+----- More Note -----
+I can manually map the JSON, such as
+    JSON = { "key_1" : "value_1", "key_2" : "value_2" }
+in a java Map object by using the "ObjectMapper()" to read the "inputStream"
+
+    try {
+        byte[] inputStreamBytes = StreamUtils.copyToByteArray(request.getInputStream());
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> jsonRequest = new ObjectMapper().readValue(inputStreamBytes, Map.class);
+
+        String value_1 = jsonRequest.get("key_1");
+        String value_2 = jsonRequest.get("key_2");
+
+     } catch (IOException e) {
+            throw new RuntimeException(e);
+     }
+
+*/

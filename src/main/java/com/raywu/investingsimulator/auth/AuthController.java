@@ -1,34 +1,34 @@
 package com.raywu.investingsimulator.auth;
 
-import com.raywu.investingsimulator.exception.NotFoundException;
+import com.raywu.investingsimulator.auth.dto.SignInRequest;
+import com.raywu.investingsimulator.auth.dto.SignInResponse;
+import com.raywu.investingsimulator.auth.dto.SignUpRequest;
 import com.raywu.investingsimulator.portfolio.account.Account;
 import com.raywu.investingsimulator.portfolio.account.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 @CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
 
     // inject employee service
     private final AccountService accountService;
-    private final Environment env;
-    private final String FMP_API_KEY;
+
+    @Autowired
+    private AuthService authService;
 
     @Autowired
     public AuthController(AccountService accountService, Environment env) {
         this.accountService = accountService;
-        this.env = env;
-        // the local env variables are set inside the intellij
-        // run -> edit configuration
-        this.FMP_API_KEY = this.env.getProperty("FMP_API_KEY");
     }
 
     @GetMapping("/account")
@@ -49,55 +49,19 @@ public class AuthController {
 
         Account account = accountService.findByEmail(email);
 
-        if(account == null) {
-           throw new NotFoundException("No account is found with email - " + email);
-        }
         return account;
     }
 
     @PostMapping("/sign-in")
-    @ResponseBody
-    public Account signIn(@RequestBody Account account) {
-        Account existedAcct = accountService.findByEmail(account.getEmail());
-        if(existedAcct == null) {
-            throw new NotFoundException("No account is found with email - " + account.getEmail());
-        }
+    public ResponseEntity<SignInResponse> signIn(@Valid @RequestBody SignInRequest signInRequest) {
 
-//        String encryptedPassword = new BCryptPasswordEncoder().encode(account.getPassword());
-//
-//
-//
-//        System.out.println("PW -----"+ account.getPassword());
-//        System.out.println("encrypted PW -----"+ encryptedPassword);
-//        System.out.println("existedAcct PW -----"+ existedAcct.getPassword());
-
-        if(!new BCryptPasswordEncoder().matches(account.getPassword(), existedAcct.getPassword())) {
-            throw new NotFoundException("Incorrect password");
-        }
-        existedAcct.setPassword("xxxxxxxxxxxx");
-        return existedAcct;
+        return authService.signIn(signInRequest);
     }
 
-    @PostMapping("/account/new")
-    /*The @ResponseBody annotation tells a controller that the object returned
-      is automatically serialized into JSON and passed back into the HttpResponse
-      object. */
-    @ResponseBody
-    public Account addUser(@RequestBody Account account) {
-        System.out.println("-------in post new account---------");
-        // ---- VERY IMPORTANT ---- //
-        // You have to set the employee id to 0, to let Hibernate know that we are
-        // create a new employee entry (because we use saveOrUpdate in the DAO)
-        account.setId(0);
-        account.setFund(9999.9999);
+    @PostMapping("/sign-up")
+    public ResponseEntity<SignInResponse> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(account.getPassword());
-        account.setPassword(encryptedPassword);
-        System.out.println("---------- encryptedPassword " + encryptedPassword);
-
-        accountService.save(account);
-
-        return account;
+        return authService.signUp(signUpRequest);
     }
 
     @PutMapping("/account")
@@ -163,9 +127,9 @@ public class AuthController {
 
     // test the filtered page
     @GetMapping("/secret-page")
-    public String filteredPage() {
+    public String filteredPage(HttpServletRequest request) {
 
-        System.out.println("API_KEY " + FMP_API_KEY);
+        System.out.println(request.getAttribute("JWT"));
 
         return "you passed the filter !";
     }

@@ -1,7 +1,6 @@
 package com.raywu.investingsimulator.portfolio.account;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface AccountService {
 

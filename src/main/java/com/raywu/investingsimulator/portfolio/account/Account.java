@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+
 @Entity
 @Getter
 @Setter
@@ -15,7 +16,7 @@ public class Account {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "password")
@@ -26,4 +27,4 @@ public class Account {
 
     // no-arg constructor is required by Hibernate
     public Account() {}
-}
+ }

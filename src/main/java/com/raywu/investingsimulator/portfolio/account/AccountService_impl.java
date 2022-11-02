@@ -8,17 +8,8 @@ import java.util.Optional;
 
 @Service
 public class AccountService_impl implements AccountService {
-    private AccountRepository userRepository;
-
-    public AccountService_impl() {}
-
-    // Spring data JPA will use the "EmployeeRepository" interface to create the
-    // "employeeRepository" object for us
     @Autowired
-    public AccountService_impl(AccountRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
+    private AccountRepository userRepository;
 
     @Override
 //	@Transactional    // JPA-data includes the @Transactional, we don't need to add it anymore

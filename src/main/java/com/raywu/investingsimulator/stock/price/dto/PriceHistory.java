@@ -1,4 +1,4 @@
-package com.raywu.investingsimulator.stock.price.models;
+package com.raywu.investingsimulator.stock.price.dto;
 
 import lombok.Data;
 
