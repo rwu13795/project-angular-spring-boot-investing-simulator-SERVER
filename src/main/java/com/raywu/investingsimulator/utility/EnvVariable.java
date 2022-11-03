@@ -21,4 +21,8 @@ public class EnvVariable {
     public String FMP_API_URL(){
         return env.getProperty("FMP_API_URL");
     }
+
+    public String TOKEN_SECRET() { return env.getProperty("JWT_SECRET"); }
+
+    public String SECURITY_CIPHER_KEY() { return env.getProperty("SECURITY_CIPHER_KEY"); }
 }

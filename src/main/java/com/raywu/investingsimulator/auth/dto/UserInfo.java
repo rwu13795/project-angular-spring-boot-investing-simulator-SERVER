@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class SignInResponse {
+public class UserInfo {
     private int id;
     private String email;
     private double fund;

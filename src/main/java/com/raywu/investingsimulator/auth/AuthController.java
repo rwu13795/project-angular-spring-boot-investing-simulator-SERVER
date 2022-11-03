@@ -1,18 +1,22 @@
 package com.raywu.investingsimulator.auth;
 
 import com.raywu.investingsimulator.auth.dto.SignInRequest;
-import com.raywu.investingsimulator.auth.dto.SignInResponse;
+import com.raywu.investingsimulator.auth.dto.UserInfo;
 import com.raywu.investingsimulator.auth.dto.SignUpRequest;
 import com.raywu.investingsimulator.portfolio.account.Account;
 import com.raywu.investingsimulator.portfolio.account.AccountService;
+import com.raywu.investingsimulator.utility.SecurityCipher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -20,48 +24,31 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
 
-    // inject employee service
     private final AccountService accountService;
-
     @Autowired
     private AuthService authService;
 
     @Autowired
     public AuthController(AccountService accountService, Environment env) {
+
         this.accountService = accountService;
     }
 
-    @GetMapping("/account")
-    public List<Account> findAll() {
-
-        // Spring will automatically use Jackson to convert the employee object into JSON
-        return accountService.findAll();
-    }
-
-    @GetMapping("/account/{id}")
-    public Account findById(@PathVariable int id) {
-
-        return accountService.findById(id);
-    }
-
-    @GetMapping("/account/email")
-    public Account findById(@RequestParam(required = false) String email) {
-
-        Account account = accountService.findByEmail(email);
-
-        return account;
-    }
-
     @PostMapping("/sign-in")
-    public ResponseEntity<SignInResponse> signIn(@Valid @RequestBody SignInRequest signInRequest) {
+    public ResponseEntity<UserInfo> signIn(@Valid @RequestBody SignInRequest signInRequest) {
 
         return authService.signIn(signInRequest);
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<SignInResponse> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<UserInfo> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
 
         return authService.signUp(signUpRequest);
+    }
+
+    @GetMapping("/check-auth")
+    public ResponseEntity<HashMap<String, Boolean>> checkToken() {
+        return authService.checkAuth();
     }
 
     @PutMapping("/account")

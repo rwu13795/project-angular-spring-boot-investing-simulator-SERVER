@@ -1,6 +1,11 @@
 package com.raywu.investingsimulator.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.raywu.investingsimulator.auth.AuthService;
+import com.raywu.investingsimulator.exception.CustomException;
+import com.raywu.investingsimulator.exception.exceptions.BadRequestException;
+import com.raywu.investingsimulator.utility.SecurityCipher;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
@@ -15,60 +20,32 @@ import java.util.Map;
 
 @Component
 public class JWTFilter extends OncePerRequestFilter {
-    // to let the filter handle exception and make the response directly
-    //	@Autowired
-    //	@Qualifier("handlerExceptionResolver")
-    //	private HandlerExceptionResolver resolver;
+    @Autowired
+    private AuthService authService;
 
     @Override
     protected void doFilterInternal
             (HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
-        Map<String, String[]> query = request.getParameterMap();
-
-
-        System.out.println("------- query hello: " + query.get("hello")[0]);
-        System.out.println("------- query abc: " + query.get("abc")[0]);
-
-        System.out.println("------- in filter: " + request.getQueryString());
-
-
-        // extract the body from the request and map it
         try {
-            byte[] inputStreamBytes = StreamUtils.copyToByteArray(request.getInputStream());
+            String result = authService.validateJWT(request);
+            // ----- (1) ----- //
+            request.setAttribute("email", result);
 
-            @SuppressWarnings("unchecked")
-            Map<String, String> jsonRequest = new ObjectMapper().readValue(inputStreamBytes, Map.class);
-            String test = jsonRequest.get("test");
-            String xyz = jsonRequest.get("xyz");
-
-            // other code
-            System.out.println("------- body@ 'test': " + test);
-            System.out.println("------- body@ 'xyz': " + xyz);
-
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            filterChain.doFilter(request, response);
+        } catch (CustomException exc) {
+            response.sendError(exc.getStatus().value(), exc.getMessage());
         }
-
-        // ----- (1) ----- //
-        request.setAttribute("JWT","setAttribute-testing-text");
-
-        if(!query.get("abc")[0].equals("xyz")) {
-
-            // custom exception handler
-            // throw new TestException("------ In custom exception handler ------");
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid JWT");
-        }
-
-        filterChain.doFilter(request, response);
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-        return !path.startsWith("/api/secret-page");
+        boolean shouldNotFilter = true;
+        if(path.startsWith("/api/auth/check-auth") || path.startsWith("/api/portfolio")) {
+            shouldNotFilter = false;
+        }
+        return shouldNotFilter;
     }
 }
 
