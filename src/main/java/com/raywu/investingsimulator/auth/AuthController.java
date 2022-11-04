@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class AuthController {
 
     private final AccountService accountService;
@@ -47,8 +47,9 @@ public class AuthController {
     }
 
     @GetMapping("/check-auth")
-    public ResponseEntity<HashMap<String, Boolean>> checkToken() {
-        return authService.checkAuth();
+    public ResponseEntity<UserInfo> checkToken(HttpServletRequest request) {
+
+        return authService.checkAuth(request);
     }
 
     @PutMapping("/account")

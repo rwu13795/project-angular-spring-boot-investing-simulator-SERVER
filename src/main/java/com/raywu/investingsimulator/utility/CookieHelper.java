@@ -16,6 +16,8 @@ public class CookieHelper {
                 // the "maxAge" is in seconds NOT millisecond
                 .maxAge(duration / 1000)
                 .httpOnly(true)
+                .secure(false)
+//                .domain("localhost")
                 .path("/")
                 .build()
                 .toString();
@@ -26,6 +28,8 @@ public class CookieHelper {
         return ResponseCookie.from(refreshToken, encryptedToken)
                 .maxAge(duration / 1000)
                 .httpOnly(true)
+                .secure(false)
+//                .domain("localhost")
                 .path("/")
                 .build()
                 .toString();
@@ -34,7 +38,9 @@ public class CookieHelper {
     public String deleteAccessTokenCookie() {
         return ResponseCookie.from(accessToken, "")
                 .maxAge(0)
-                .httpOnly(true).path("/")
+                .httpOnly(true)
+//                .domain("localhost")
+                .path("/")
                 .build()
                 .toString();
     }

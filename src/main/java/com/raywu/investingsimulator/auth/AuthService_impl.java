@@ -79,10 +79,15 @@ public class AuthService_impl implements AuthService{
                 .body(new UserInfo(newAccount.getId(),newAccount.getEmail(),newAccount.getFund()));
     }
 
-    public ResponseEntity<HashMap<String, Boolean>> checkAuth() {
-        HashMap<String, Boolean> response = new HashMap<>();
-        response.put("hasAuth", true);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<UserInfo> checkAuth(HttpServletRequest request) {
+        Account existedAcct = accountService.findByEmail((String)request.getAttribute("email"));
+
+        if(existedAcct == null) {
+            throw new InvalidTokenException("Invalid email in the token");
+        }
+
+        return ResponseEntity.ok()
+                .body(new UserInfo(existedAcct.getId(),existedAcct.getEmail(),existedAcct.getFund()));
     }
 
     @Override
@@ -137,11 +142,13 @@ public class AuthService_impl implements AuthService{
     }
 
     private void addAccessTokenCookie(HttpHeaders httpHeaders, Token token) {
+
         httpHeaders.add(HttpHeaders.SET_COOKIE,
                 cookieHelper.createAccessTokenCookie(token.getTokenString(), token.getDuration()));
     }
 
     private void addRefreshTokenCookie(HttpHeaders httpHeaders, Token token) {
+
         httpHeaders.add(HttpHeaders.SET_COOKIE,
                 cookieHelper.createRefreshTokenCookie(token.getTokenString(), token.getDuration()));
     }

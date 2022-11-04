@@ -16,7 +16,7 @@ public interface AuthService {
 
     ResponseEntity<UserInfo> signUp(SignUpRequest signUpRequest);
 
-    ResponseEntity<HashMap<String, Boolean>> checkAuth();
+    ResponseEntity<UserInfo> checkAuth(HttpServletRequest request);
 
     String validateJWT(HttpServletRequest request);
 

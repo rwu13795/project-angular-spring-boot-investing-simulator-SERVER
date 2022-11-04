@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/portfolio")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class PortfolioController {
 
     @Autowired
@@ -29,5 +29,16 @@ public class PortfolioController {
         HttpHeaders headers = authService.refreshTokens((String) request.getAttribute("email"));
 
         return ResponseEntity.ok().headers(headers).body("token refreshed");
+    }
+
+    @GetMapping("/get-portfolio")
+    public ResponseEntity<HashMap<String, String>> getPortfolio(HttpServletRequest request) {
+
+        HttpHeaders headers = authService.refreshTokens((String) request.getAttribute("email"));
+
+        HashMap<String,String> res = new HashMap<>();
+        res.put("res", "testing portfolio");
+
+        return ResponseEntity.ok().headers(headers).body(res);
     }
 }
