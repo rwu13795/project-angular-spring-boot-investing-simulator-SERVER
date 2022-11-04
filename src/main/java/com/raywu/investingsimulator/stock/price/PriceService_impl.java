@@ -2,6 +2,7 @@ package com.raywu.investingsimulator.stock.price;
 
 import com.raywu.investingsimulator.stock.price.dto.PriceHistory;
 import com.raywu.investingsimulator.stock.price.dto.PriceHistoryList;
+import com.raywu.investingsimulator.stock.price.dto.ShortQuote;
 import com.raywu.investingsimulator.utility.EnvVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -101,6 +102,19 @@ public class PriceService_impl implements PriceService{
                 .bodyToMono(String.class)
                 .block();
     }
+
+    @Override
+    public ShortQuote[] fetchShortQuoteList(String symbol) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v3/quote-short/" + symbol)
+                        .queryParam("apikey", FMP_API_KEY)
+                        .build())
+                .retrieve()
+                .bodyToMono(ShortQuote[].class)
+                .block();
+    }
+
     @Override
     public String fetchFinancialRatios(String symbol) {
         return webClient.get()

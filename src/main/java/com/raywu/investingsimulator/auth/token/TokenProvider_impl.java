@@ -31,12 +31,16 @@ public class TokenProvider_impl implements TokenProvider {
     }
 
     @Override
-    public Token generateAccessToken(String email) {
+    public Token generateAccessToken(String email, int id) {
         Date now = new Date();
         long duration = tokenExpirationMS;
         Date expiryDate = new Date(now.getTime() + duration);
+        // Since setSubject() only accepts String, I need to concat the email and id "{email}_{id}"
+        // then split this string after parsing the JWT in the filter
+        String emailAndId = email + "_" + id;
+
         String token = Jwts.builder()
-                .setSubject(email)
+                .setSubject(emailAndId)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(tokenSecret, SignatureAlgorithm.HS256)
@@ -47,12 +51,14 @@ public class TokenProvider_impl implements TokenProvider {
     }
 
     @Override
-    public Token generateRefreshToken(String email) {
+    public Token generateRefreshToken(String email, int id) {
         Date now = new Date();
         long duration = refreshTokenExpirationMS;
         Date expiryDate = new Date(now.getTime() + duration);
+        String emailAndId = email + "_" + id;
+
         String token = Jwts.builder()
-                .setSubject(email)
+                .setSubject(emailAndId)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(tokenSecret, SignatureAlgorithm.HS256)
@@ -62,7 +68,7 @@ public class TokenProvider_impl implements TokenProvider {
     }
 
     @Override
-    public String getUserEmailFromToken(String token) {
+    public String getUserInfoFromToken(String token) {
         // the "Jwts.parser()" is deprecated, need to use "parserBuilder()"
         Claims claims = Jwts.parserBuilder().setSigningKey(tokenSecret).build()
                 .parseClaimsJws(token).getBody();

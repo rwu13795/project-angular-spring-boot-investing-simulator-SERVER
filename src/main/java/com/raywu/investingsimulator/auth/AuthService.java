@@ -20,5 +20,5 @@ public interface AuthService {
 
     String validateJWT(HttpServletRequest request);
 
-    HttpHeaders refreshTokens(String email);
+    HttpHeaders refreshTokens(String email, int id);
 }

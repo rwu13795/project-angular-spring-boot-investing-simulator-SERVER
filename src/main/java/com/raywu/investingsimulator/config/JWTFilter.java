@@ -29,8 +29,11 @@ public class JWTFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             String result = authService.validateJWT(request);
+            String[] arr = result.split("_");
+
             // ----- (1) ----- //
-            request.setAttribute("email", result);
+            request.setAttribute("email", arr[0]);
+            request.setAttribute("id", arr[1]);
 
             filterChain.doFilter(request, response);
         } catch (CustomException exc) {

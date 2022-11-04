@@ -32,18 +32,21 @@ public class AuthService_impl implements AuthService{
 
     @Override
     public ResponseEntity<UserInfo> signIn(SignInRequest signInRequest) {
-        Account existedAcct = accountService.findByEmail(signInRequest.getEmail());
+        String email = signInRequest.getEmail();
+        String password = signInRequest.getPassword();
+
+        Account existedAcct = accountService.findByEmail(email);
 
         if(existedAcct == null) {
             throw new IncorrectEmailException();
         }
 
-        if(!new BCryptPasswordEncoder().matches(signInRequest.getPassword(), existedAcct.getPassword())) {
+        if(!new BCryptPasswordEncoder().matches(password, existedAcct.getPassword())) {
             throw new IncorrectPasswordException();
         }
 
         // generate JWT after the user is authenticated
-        HttpHeaders responseHeaders = addCookiesToHeaders(signInRequest.getEmail());
+        HttpHeaders responseHeaders = addCookiesToHeaders(email, existedAcct.getId());
 
         return ResponseEntity.ok()
                 .headers(responseHeaders)
@@ -52,27 +55,31 @@ public class AuthService_impl implements AuthService{
 
     @Override
     public ResponseEntity<UserInfo> signUp(SignUpRequest signUpRequest) {
-        Account existedAcct = accountService.findByEmail(signUpRequest.getEmail());
+        String email = signUpRequest.getEmail();
+        String password = signUpRequest.getPassword();
+
+        Account existedAcct = accountService.findByEmail(email);
         if(existedAcct != null) {
             throw new EmailTakenException();
         }
         if(!signUpRequest.passwordsMatched()) throw new PasswordsNotMatchedException();
+
 
         // ---- NOTE ---- //
         // You have to set the employee id to 0, to let Hibernate know that we are
         // create a new employee entry (because we use saveOrUpdate in the DAO)
         Account newAccount = new Account();
         newAccount.setId(0);
-        newAccount.setEmail(signUpRequest.getEmail());
+        newAccount.setEmail(email);
         newAccount.setFund(9999.53499);
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(signUpRequest.getPassword());
+        String encryptedPassword = new BCryptPasswordEncoder().encode(password);
         newAccount.setPassword(encryptedPassword);
 
         accountService.save(newAccount);
 
         // generate JWT
-        HttpHeaders responseHeaders = addCookiesToHeaders(signUpRequest.getEmail());
+        HttpHeaders responseHeaders = addCookiesToHeaders(email, newAccount.getId());
 
         return ResponseEntity.ok()
                 .headers(responseHeaders)
@@ -124,17 +131,18 @@ public class AuthService_impl implements AuthService{
                 throw new InvalidTokenException("Invalid token");
             }
         }
-        return tokenProvider.getUserEmailFromToken(jwt);
+        return tokenProvider.getUserInfoFromToken(jwt);
     }
 
-    public HttpHeaders refreshTokens(String email) {
-        return addCookiesToHeaders(email);
+    public HttpHeaders refreshTokens(String email, int id) {
+
+        return addCookiesToHeaders(email, id);
     }
 
-    private HttpHeaders addCookiesToHeaders(String email) {
+    private HttpHeaders addCookiesToHeaders(String email, int id) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        Token newAccessToken = tokenProvider.generateAccessToken(email);
-        Token newRefreshToken = tokenProvider.generateRefreshToken(email);
+        Token newAccessToken = tokenProvider.generateAccessToken(email, id);
+        Token newRefreshToken = tokenProvider.generateRefreshToken(email, id);
         addAccessTokenCookie(responseHeaders, newAccessToken);
         addRefreshTokenCookie(responseHeaders, newRefreshToken);
 
