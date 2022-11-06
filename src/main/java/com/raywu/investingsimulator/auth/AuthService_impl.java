@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -64,14 +65,13 @@ public class AuthService_impl implements AuthService{
         }
         if(!signUpRequest.passwordsMatched()) throw new PasswordsNotMatchedException();
 
-
         // ---- NOTE ---- //
         // You have to set the employee id to 0, to let Hibernate know that we are
         // create a new employee entry (because we use saveOrUpdate in the DAO)
         Account newAccount = new Account();
         newAccount.setId(0);
         newAccount.setEmail(email);
-        newAccount.setFund(9999.53499);
+        newAccount.setFund(100000);
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(password);
         newAccount.setPassword(encryptedPassword);
@@ -86,14 +86,15 @@ public class AuthService_impl implements AuthService{
                 .body(new UserInfo(newAccount.getId(),newAccount.getEmail(),newAccount.getFund()));
     }
 
-    public ResponseEntity<UserInfo> checkAuth(HttpServletRequest request) {
-        Account existedAcct = accountService.findByEmail((String)request.getAttribute("email"));
+    public ResponseEntity<UserInfo> checkAuth(String email, int id) {
+        Account existedAcct = accountService.findByEmail(email);
 
         if(existedAcct == null) {
             throw new InvalidTokenException("Invalid email in the token");
         }
-
+        HttpHeaders headers = refreshTokens(email, id);
         return ResponseEntity.ok()
+                .headers(headers)
                 .body(new UserInfo(existedAcct.getId(),existedAcct.getEmail(),existedAcct.getFund()));
     }
 

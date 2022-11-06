@@ -1,4 +1,4 @@
-package com.raywu.investingsimulator.portfolio.asset.dto;
+package com.raywu.investingsimulator.portfolio.dto;
 
 import com.raywu.investingsimulator.portfolio.asset.Asset;
 import lombok.Data;

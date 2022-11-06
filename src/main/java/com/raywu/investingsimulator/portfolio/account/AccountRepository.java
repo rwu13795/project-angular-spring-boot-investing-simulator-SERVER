@@ -21,7 +21,7 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     Optional<Account> findByLastName(String lastName);
         // NOTE - the last name is case-sensitive
 
-        // The JpaRepository can automatically create some simple CRUD query for ue
+        // The JpaRepository can automatically create some simple CRUD query for us
         // such as findByColumnName(column data)
         Optional<Account> findByEmail(String email);
 

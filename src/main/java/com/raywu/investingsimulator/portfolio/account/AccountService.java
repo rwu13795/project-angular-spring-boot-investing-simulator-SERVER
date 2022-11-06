@@ -1,5 +1,7 @@
 package com.raywu.investingsimulator.portfolio.account;
 
+import com.raywu.investingsimulator.portfolio.dto.TransactionRequest;
+
 import java.util.List;
 
 public interface AccountService {
@@ -14,7 +16,7 @@ public interface AccountService {
 
     void deleteById(int id);
 
-//    Account findByLastName(String lastName);
-//
-//    List<Account> getUsersByPage(int pageNum);
+    void updateAccountFund
+            (int id, double currentPrice, TransactionRequest tr, double realizedGainLoss);
+
 }

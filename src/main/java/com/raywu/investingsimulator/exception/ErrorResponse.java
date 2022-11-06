@@ -12,6 +12,7 @@ public class ErrorResponse {
     public ErrorResponse() {}
 
     public enum ErrorField {
-        password, email, confirmPassword
+        password, email, confirmPassword,
+        BUY, SELL, SELL_SHORT, BUY_TO_COVER
     }
 }

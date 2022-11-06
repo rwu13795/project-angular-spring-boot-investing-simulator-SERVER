@@ -25,6 +25,25 @@ public class Account {
     @Column(name = "fund")
     private double fund;
 
+    // ------ Note ------ //
+//    @Transient
+//    private double shortSellingDeposit;
+//
+//    @Transient
+//    private double totalRealizedGainLoss;
+//
+//    @Transient
+//    private double totalUnrealizedGainLoss;
+
     // no-arg constructor is required by Hibernate
     public Account() {}
  }
+
+ /*
+ ------ Note ------
+ I can use @Transient to add variable which is not a column of the table inside an entity
+
+ I need to return the user account in the "/get-portfolio", since the Account entity contains
+ the password, I cannot return Account directly. I need to use the AccountDTO instead.
+
+ * */

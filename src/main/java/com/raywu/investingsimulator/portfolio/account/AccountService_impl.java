@@ -1,5 +1,9 @@
 package com.raywu.investingsimulator.portfolio.account;
 
+import com.raywu.investingsimulator.exception.exceptions.BadRequestException;
+import com.raywu.investingsimulator.exception.exceptions.InvalidTokenException;
+import com.raywu.investingsimulator.portfolio.dto.TransactionRequest;
+import com.raywu.investingsimulator.portfolio.dto.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,10 +27,8 @@ public class AccountService_impl implements AccountService {
 
         if(result.isPresent()) {
             return result.get();
-        } else {
-            // could not find the employee with such id
-            throw new RuntimeException("Could not find employee with id - " + id);
         }
+        return null;
     }
 
     @Override
@@ -47,6 +49,38 @@ public class AccountService_impl implements AccountService {
     @Override
     public void deleteById(int id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public void updateAccountFund
+            (int id, double currentPrice, TransactionRequest tr, double realizedGainLoss) {
+        Account account = findById(id);
+        if(account == null) {
+            throw new InvalidTokenException("Invalid ID found in the token");
+        }
+
+        double orderAmount = currentPrice * tr.getShares();
+        switch (TransactionType.valueOf(tr.getType())) {
+            case BUY: {
+                account.setFund(account.getFund() - orderAmount);
+                break;
+            }
+            case SELL: {
+                account.setFund(account.getFund() + orderAmount);
+                break;
+            }
+            case SELL_SHORT: break;
+
+            case BUY_TO_COVER: {
+                // since "sell short" does not modify the fund, the realizedGainLoss of "buy to cover"
+                // will the exact amount that increase/decrease the fund
+                account.setFund(account.getFund() + realizedGainLoss);
+                break;
+            }
+            default: throw new BadRequestException("Invalid transaction type", "transaction");
+        }
+
+        save(account);
     }
 
 

@@ -1,7 +1,14 @@
 package com.raywu.investingsimulator.portfolio;
 
+import com.raywu.investingsimulator.portfolio.dto.TransactionRequest;
+import com.raywu.investingsimulator.portfolio.transaction.entity.Transaction;
+import com.raywu.investingsimulator.portfolio.transaction.entity.TransactionShortSell;
 import org.springframework.http.ResponseEntity;
 
 public interface PortfolioService {
-    ResponseEntity<Portfolio> getPortfolio(int user_id);
+    Portfolio getPortfolio(int user_id);
+
+    Transaction buyAndSell(int userId, TransactionRequest tr);
+
+    TransactionShortSell shortSellAndBuyToCover(int userId, TransactionRequest tr);
 }

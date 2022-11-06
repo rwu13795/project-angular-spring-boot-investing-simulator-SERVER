@@ -8,7 +8,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class AssetPK implements Serializable {
 
-    private int user_id;
+    private int userId;
     private String symbol;
 
     public AssetPK() {}
@@ -18,20 +18,20 @@ public class AssetPK implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AssetPK accountPK = (AssetPK) o;
-        return user_id == accountPK.user_id &&
+        return userId == accountPK.userId &&
                 symbol.equals(accountPK.symbol);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(user_id, symbol);
+        return Objects.hash(userId, symbol);
     }
 }
 
 /*
 
-When the primary key of a table is a composited primary key, I have to create a separate composite
-primary key class with both these primary key columns
+When the primary key of a table is a composited key, I have to create a separate composite
+primary key class with these primary key columns
 
 ------ Note ------
 The composite primary key class must be public, contains a no-argument constructor, defines

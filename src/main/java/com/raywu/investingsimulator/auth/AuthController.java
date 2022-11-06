@@ -48,13 +48,14 @@ public class AuthController {
 
     @GetMapping("/check-auth")
     public ResponseEntity<UserInfo> checkToken(HttpServletRequest request) {
+        String email = (String) request.getAttribute("email");
+        int id = Integer.parseInt(request.getAttribute("id").toString());
 
-        return authService.checkAuth(request);
+        return authService.checkAuth(email, id);
     }
 
     @PutMapping("/account")
     public Account updateUser(@RequestBody Account account) {
-
         // ---- VERY IMPORTANT ---- //
         // for updating the existing employee, we need to include the ID in the request body
         // (unlike creating a new employee entry, we DO NOT include the ID)
@@ -98,46 +99,8 @@ public class AuthController {
 //    }
 
 
-    // test the password encryption
-    @GetMapping("/account/pw-en/{password}")
-    public String encryptPassword(@PathVariable String password) {
-
-        // the pw is "abcde"
-
-        boolean p = new BCryptPasswordEncoder()
-                .matches(password, "$2a$10$7Z/93KgV2JruJX3TJcS.UeCejTXHnNPnEb6ECuf7aA07vR/rr7kBG");
-
-        System.out.println("---------- matched? " + p);
-
-        return "ok";
-    }
 
 
-    // test the filtered page
-    @GetMapping("/secret-page")
-    public String filteredPage(HttpServletRequest request) {
 
-        System.out.println(request.getAttribute("JWT"));
 
-        return "you passed the filter !";
-    }
-
-//    @GetMapping("/get-posts-firebase")
-//    public String getPostsFirebase() {
-//
-//        // --- Old method --- //
-////		final String url =
-////				"https://angular-course-79389-default-rtdb.firebaseio.com/posts.json";
-////
-////		RestTemplate restTemplate = new RestTemplate();
-////		String result = restTemplate.getForObject(url, String.class);
-////
-////		System.out.println(result);
-//
-//        // --- use WebClient to make http request --- //
-//
-//        String result = postApiService.getPosts();
-//
-//        return result;
-//    }
 }
