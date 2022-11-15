@@ -1,5 +1,6 @@
-package com.raywu.investingsimulator.stock;
+package com.raywu.investingsimulator.stock.stock;
 
+import com.raywu.investingsimulator.stock.stock.dto.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +19,9 @@ public class StockController {
     }
 
     @GetMapping("/search")
-    public String searchStock(@RequestParam String query, @RequestParam String exchange) {
+    public SearchResult[] searchStock(@RequestParam String query) {
 
-        return stockService.searchStock(query, exchange);
+        return stockService.searchStock(query);
     }
 
     @GetMapping("/financial-statement")

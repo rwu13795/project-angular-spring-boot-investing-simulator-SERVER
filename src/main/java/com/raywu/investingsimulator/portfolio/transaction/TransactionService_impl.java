@@ -1,9 +1,9 @@
 package com.raywu.investingsimulator.portfolio.transaction;
 
+import com.raywu.investingsimulator.portfolio.transaction.entity.TransactionShortSell;
 import com.raywu.investingsimulator.portfolio.dto.TransactionRequest;
 import com.raywu.investingsimulator.portfolio.dto.TransactionType;
 import com.raywu.investingsimulator.portfolio.transaction.entity.Transaction;
-import com.raywu.investingsimulator.portfolio.transaction.entity.TransactionShortSell;
 import com.raywu.investingsimulator.portfolio.transaction.repository.TransactionRepository;
 import com.raywu.investingsimulator.portfolio.transaction.repository.TransactionShortSellRepository;
 import org.springframework.beans.factory.annotation.Autowired;

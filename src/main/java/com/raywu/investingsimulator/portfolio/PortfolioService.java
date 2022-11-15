@@ -3,7 +3,6 @@ package com.raywu.investingsimulator.portfolio;
 import com.raywu.investingsimulator.portfolio.dto.TransactionRequest;
 import com.raywu.investingsimulator.portfolio.transaction.entity.Transaction;
 import com.raywu.investingsimulator.portfolio.transaction.entity.TransactionShortSell;
-import org.springframework.http.ResponseEntity;
 
 public interface PortfolioService {
     Portfolio getPortfolio(int user_id);

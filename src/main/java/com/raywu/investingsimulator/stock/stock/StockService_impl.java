@@ -1,5 +1,6 @@
-package com.raywu.investingsimulator.stock;
+package com.raywu.investingsimulator.stock.stock;
 
+import com.raywu.investingsimulator.stock.stock.dto.SearchResult;
 import com.raywu.investingsimulator.utility.EnvVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -38,17 +39,20 @@ public class StockService_impl implements StockService {
                 .block();
     }
     @Override
-    public String searchStock(String query, String exchange) {
+    public SearchResult[] searchStock(String query) {
+        // limit the exchanges to US exchanges "NASDAQ" and "NYSE"
+        String exchanges = "NASDAQ,NYSE";
+
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v3/search")
                         .queryParam("query", query)
-                        .queryParam("exchange", exchange)
+                        .queryParam("exchange", exchanges)
                         .queryParam("limit", 20)
                         .queryParam("apikey", FMP_API_KEY)
                         .build())
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(SearchResult[].class)
                 .block();
     }
     @Override

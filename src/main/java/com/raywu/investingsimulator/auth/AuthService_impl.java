@@ -1,5 +1,6 @@
 package com.raywu.investingsimulator.auth;
 
+import com.raywu.investingsimulator.auth.dto.CheckAuthResponse;
 import com.raywu.investingsimulator.auth.dto.SignInRequest;
 import com.raywu.investingsimulator.auth.dto.UserInfo;
 import com.raywu.investingsimulator.auth.dto.SignUpRequest;
@@ -47,11 +48,11 @@ public class AuthService_impl implements AuthService{
         }
 
         // generate JWT after the user is authenticated
-        HttpHeaders responseHeaders = addCookiesToHeaders(email, existedAcct.getId());
+        HttpHeaders responseHeaders = addCookiesToHeaders(email, existedAcct.getId(),true);
 
         return ResponseEntity.ok()
                 .headers(responseHeaders)
-                .body(new UserInfo(existedAcct.getId(),existedAcct.getEmail(),existedAcct.getFund()));
+                .body(new UserInfo(existedAcct));
     }
 
     @Override
@@ -79,23 +80,27 @@ public class AuthService_impl implements AuthService{
         accountService.save(newAccount);
 
         // generate JWT
-        HttpHeaders responseHeaders = addCookiesToHeaders(email, newAccount.getId());
+        HttpHeaders responseHeaders = addCookiesToHeaders(email, newAccount.getId(),true);
 
         return ResponseEntity.ok()
                 .headers(responseHeaders)
-                .body(new UserInfo(newAccount.getId(),newAccount.getEmail(),newAccount.getFund()));
+                .body(new UserInfo(existedAcct));
     }
-
-    public ResponseEntity<UserInfo> checkAuth(String email, int id) {
+    @Override
+    public ResponseEntity<UserInfo> getUserInfo(String email, int id) {
         Account existedAcct = accountService.findByEmail(email);
-
         if(existedAcct == null) {
             throw new InvalidTokenException("Invalid email in the token");
         }
         HttpHeaders headers = refreshTokens(email, id);
         return ResponseEntity.ok()
                 .headers(headers)
-                .body(new UserInfo(existedAcct.getId(),existedAcct.getEmail(),existedAcct.getFund()));
+                .body(new UserInfo(existedAcct));
+    }
+
+    @Override
+    public ResponseEntity<CheckAuthResponse> checkAuth() {
+        return ResponseEntity.ok().body(new CheckAuthResponse(true));
     }
 
     @Override
@@ -134,19 +139,26 @@ public class AuthService_impl implements AuthService{
         }
         return tokenProvider.getUserInfoFromToken(jwt);
     }
-
+    @Override
     public HttpHeaders refreshTokens(String email, int id) {
 
-        return addCookiesToHeaders(email, id);
+        return addCookiesToHeaders(email, id, false);
     }
 
-    private HttpHeaders addCookiesToHeaders(String email, int id) {
+    public void resetPasswordLink() {
+
+    }
+
+    private HttpHeaders addCookiesToHeaders(String email, int id, boolean newRefresh) {
         HttpHeaders responseHeaders = new HttpHeaders();
         Token newAccessToken = tokenProvider.generateAccessToken(email, id);
-        Token newRefreshToken = tokenProvider.generateRefreshToken(email, id);
         addAccessTokenCookie(responseHeaders, newAccessToken);
-        addRefreshTokenCookie(responseHeaders, newRefreshToken);
 
+        // only add the refresh token when user signs in and only update the access token on API request
+        if(newRefresh) {
+            Token newRefreshToken = tokenProvider.generateRefreshToken(email, id);
+            addRefreshTokenCookie(responseHeaders, newRefreshToken);
+        }
         return responseHeaders;
     }
 

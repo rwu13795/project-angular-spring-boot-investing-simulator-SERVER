@@ -33,5 +33,8 @@ public class Transaction {
     @Column(name = "realized_gain_loss")
     private double realizedGainLoss;
 
+    @Column(name = "date")
+    private String date;
+
     public Transaction() {}
 }

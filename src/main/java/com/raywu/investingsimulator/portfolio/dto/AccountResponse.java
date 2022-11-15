@@ -8,6 +8,7 @@ public class AccountResponse {
     private int id;
     private String email;
     private double fund;
+    private String joinedAt;
 
     private double shortSellingDeposit;
 
@@ -21,5 +22,6 @@ public class AccountResponse {
         this.id = account.getId();
         this.email = account.getEmail();
         this.fund = account.getFund();
+        this.joinedAt =account.getJoinedAt();
     }
 }

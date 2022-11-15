@@ -25,4 +25,6 @@ public class EnvVariable {
     public String TOKEN_SECRET() { return env.getProperty("JWT_SECRET"); }
 
     public String SECURITY_CIPHER_KEY() { return env.getProperty("SECURITY_CIPHER_KEY"); }
+
+    public String SENDGRID_API_KEY() { return env.getProperty("SENDGRID_API_KEY"); }
 }

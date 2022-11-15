@@ -25,6 +25,9 @@ public class Account {
     @Column(name = "fund")
     private double fund;
 
+    @Column(name = "joined_at")
+    private String joinedAt;
+
     // ------ Note ------ //
 //    @Transient
 //    private double shortSellingDeposit;

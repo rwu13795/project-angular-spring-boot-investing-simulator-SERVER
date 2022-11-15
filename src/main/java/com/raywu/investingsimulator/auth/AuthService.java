@@ -1,5 +1,6 @@
 package com.raywu.investingsimulator.auth;
 
+import com.raywu.investingsimulator.auth.dto.CheckAuthResponse;
 import com.raywu.investingsimulator.auth.dto.SignInRequest;
 import com.raywu.investingsimulator.auth.dto.UserInfo;
 import com.raywu.investingsimulator.auth.dto.SignUpRequest;
@@ -16,9 +17,11 @@ public interface AuthService {
 
     ResponseEntity<UserInfo> signUp(SignUpRequest signUpRequest);
 
-    ResponseEntity<UserInfo> checkAuth(String email, int id);
+    ResponseEntity<UserInfo> getUserInfo(String email, int id);
 
     String validateJWT(HttpServletRequest request);
 
     HttpHeaders refreshTokens(String email, int id);
+
+    ResponseEntity<CheckAuthResponse> checkAuth();
 }

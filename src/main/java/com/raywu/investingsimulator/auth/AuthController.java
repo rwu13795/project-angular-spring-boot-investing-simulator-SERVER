@@ -1,8 +1,10 @@
 package com.raywu.investingsimulator.auth;
 
+import com.raywu.investingsimulator.auth.dto.CheckAuthResponse;
 import com.raywu.investingsimulator.auth.dto.SignInRequest;
 import com.raywu.investingsimulator.auth.dto.UserInfo;
 import com.raywu.investingsimulator.auth.dto.SignUpRequest;
+import com.raywu.investingsimulator.auth.sendgrid.SendGridService;
 import com.raywu.investingsimulator.portfolio.account.Account;
 import com.raywu.investingsimulator.portfolio.account.AccountService;
 import com.raywu.investingsimulator.utility.SecurityCipher;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,16 +26,12 @@ import java.util.List;
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class AuthController {
-
-    private final AccountService accountService;
+    @Autowired
+    private AccountService accountService;
     @Autowired
     private AuthService authService;
-
     @Autowired
-    public AuthController(AccountService accountService, Environment env) {
-
-        this.accountService = accountService;
-    }
+    private SendGridService sendGridService;
 
     @PostMapping("/sign-in")
     public ResponseEntity<UserInfo> signIn(@Valid @RequestBody SignInRequest signInRequest) {
@@ -46,12 +45,17 @@ public class AuthController {
         return authService.signUp(signUpRequest);
     }
 
-    @GetMapping("/check-auth")
-    public ResponseEntity<UserInfo> checkToken(HttpServletRequest request) {
+    @GetMapping("/get-user-info")
+    public ResponseEntity<UserInfo> getUserInfo(HttpServletRequest request) {
         String email = (String) request.getAttribute("email");
         int id = Integer.parseInt(request.getAttribute("id").toString());
 
-        return authService.checkAuth(email, id);
+        return authService.getUserInfo(email, id);
+    }
+
+    @GetMapping("/check-auth")
+    public ResponseEntity<CheckAuthResponse> checkAuth() {
+        return authService.checkAuth();
     }
 
     @PutMapping("/account")
@@ -80,6 +84,11 @@ public class AuthController {
         return "account id-" + id + " has been deleted";
     }
 
+    @GetMapping("/reset-password-link")
+    public void sendResetPasswordLink() throws IOException {
+
+        sendGridService.sendResetPasswordLink();
+    }
 
 //    // test the custom employeeRepository findByEmail query
 //    @GetMapping("/users/last-name/{lastName}")

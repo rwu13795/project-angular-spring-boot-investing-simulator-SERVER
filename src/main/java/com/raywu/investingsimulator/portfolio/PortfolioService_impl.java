@@ -1,6 +1,5 @@
 package com.raywu.investingsimulator.portfolio;
 
-import com.raywu.investingsimulator.exception.exceptions.BadRequestException;
 import com.raywu.investingsimulator.exception.exceptions.NotEnoughFundException;
 import com.raywu.investingsimulator.exception.exceptions.PriceLimitException;
 import com.raywu.investingsimulator.portfolio.account.Account;
@@ -17,7 +16,6 @@ import com.raywu.investingsimulator.stock.price.PriceService;
 import com.raywu.investingsimulator.stock.price.dto.ShortQuote;
 import org.apache.tomcat.util.buf.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
