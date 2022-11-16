@@ -1,9 +1,6 @@
 package com.raywu.investingsimulator.auth;
 
-import com.raywu.investingsimulator.auth.dto.CheckAuthResponse;
-import com.raywu.investingsimulator.auth.dto.SignInRequest;
-import com.raywu.investingsimulator.auth.dto.UserInfo;
-import com.raywu.investingsimulator.auth.dto.SignUpRequest;
+import com.raywu.investingsimulator.auth.dto.*;
 import com.raywu.investingsimulator.auth.token.Token;
 import com.raywu.investingsimulator.auth.token.TokenProvider;
 import com.raywu.investingsimulator.exception.exceptions.*;
@@ -66,26 +63,38 @@ public class AuthService_impl implements AuthService{
         }
         if(!signUpRequest.passwordsMatched()) throw new PasswordsNotMatchedException();
 
+        System.out.println("email -----" + email);
+        System.out.println("password -----" + password);
+
         // ---- NOTE ---- //
         // You have to set the employee id to 0, to let Hibernate know that we are
         // create a new employee entry (because we use saveOrUpdate in the DAO)
-        Account newAccount = new Account();
-        newAccount.setId(0);
-        newAccount.setEmail(email);
-        newAccount.setFund(100000);
-
-        String encryptedPassword = new BCryptPasswordEncoder().encode(password);
-        newAccount.setPassword(encryptedPassword);
-
-        accountService.save(newAccount);
-
-        // generate JWT
-        HttpHeaders responseHeaders = addCookiesToHeaders(email, newAccount.getId(),true);
+//        Account newAccount = new Account();
+//        newAccount.setId(0);
+//        newAccount.setEmail(email);
+//        newAccount.setFund(100000);
+//
+//        String encryptedPassword = new BCryptPasswordEncoder().encode(password);
+//        newAccount.setPassword(encryptedPassword);
+//
+//        accountService.save(newAccount);
+//
+//        // generate JWT
+//        HttpHeaders responseHeaders = addCookiesToHeaders(email, newAccount.getId(),true);
+//
 
         return ResponseEntity.ok()
-                .headers(responseHeaders)
-                .body(new UserInfo(existedAcct));
+//                .headers(responseHeaders)
+                .body(new UserInfo(999,"test@pass.com",1000, "test date"));
     }
+    @Override
+    public ResponseEntity<SignOutResponse> signOut() {
+        HttpHeaders responseHeaders = deleteTokens();
+        return ResponseEntity.ok()
+                .headers(responseHeaders)
+                .body(new SignOutResponse("Signed out"));
+    }
+
     @Override
     public ResponseEntity<UserInfo> getUserInfo(String email, int id) {
         Account existedAcct = accountService.findByEmail(email);
@@ -141,7 +150,6 @@ public class AuthService_impl implements AuthService{
     }
     @Override
     public HttpHeaders refreshTokens(String email, int id) {
-
         return addCookiesToHeaders(email, id, false);
     }
 
@@ -172,5 +180,14 @@ public class AuthService_impl implements AuthService{
 
         httpHeaders.add(HttpHeaders.SET_COOKIE,
                 cookieHelper.createRefreshTokenCookie(token.getTokenString(), token.getDuration()));
+    }
+
+    private HttpHeaders deleteTokens() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.SET_COOKIE,
+                cookieHelper.deleteAccessTokenCookie());
+        httpHeaders.add(HttpHeaders.SET_COOKIE,
+                cookieHelper.deleteRefreshTokenCookie());
+        return httpHeaders;
     }
 }

@@ -36,10 +36,20 @@ public class CookieHelper {
     }
 
     public String deleteAccessTokenCookie() {
-        return ResponseCookie.from(accessToken, "")
+        return ResponseCookie.from(accessToken, "deleted")
                 .maxAge(0)
                 .httpOnly(true)
-//                .domain("localhost")
+                .secure(false)
+                .path("/")
+                .build()
+                .toString();
+    }
+
+    public String deleteRefreshTokenCookie() {
+        return ResponseCookie.from(refreshToken, "deleted")
+                .maxAge(0)
+                .httpOnly(true)
+                .secure(false)
                 .path("/")
                 .build()
                 .toString();

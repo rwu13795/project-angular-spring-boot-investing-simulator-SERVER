@@ -1,9 +1,6 @@
 package com.raywu.investingsimulator.auth;
 
-import com.raywu.investingsimulator.auth.dto.CheckAuthResponse;
-import com.raywu.investingsimulator.auth.dto.SignInRequest;
-import com.raywu.investingsimulator.auth.dto.UserInfo;
-import com.raywu.investingsimulator.auth.dto.SignUpRequest;
+import com.raywu.investingsimulator.auth.dto.*;
 import com.raywu.investingsimulator.auth.sendgrid.SendGridService;
 import com.raywu.investingsimulator.portfolio.account.Account;
 import com.raywu.investingsimulator.portfolio.account.AccountService;
@@ -43,6 +40,12 @@ public class AuthController {
     public ResponseEntity<UserInfo> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
 
         return authService.signUp(signUpRequest);
+    }
+
+    @GetMapping("/sign-out")
+    public ResponseEntity<SignOutResponse> signOut() {
+
+        return authService.signOut();
     }
 
     @GetMapping("/get-user-info")

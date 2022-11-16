@@ -11,7 +11,7 @@ public interface TokenProvider {
 
     String getUserInfoFromToken(String token);
 
-    LocalDateTime getExpiryDateFromToken(String token);
+//    LocalDateTime getExpiryDateFromToken(String token);
 
     boolean validateToken(String token);
 }

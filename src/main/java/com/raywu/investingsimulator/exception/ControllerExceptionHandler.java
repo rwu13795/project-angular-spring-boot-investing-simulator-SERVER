@@ -38,7 +38,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exc.serializeError(), exc.getStatus());
     }
 
-    // Handle any exception that is not handled by the custom exception handlers
+    // Handle any exception that is not handled by the custom exception handler
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleException(Exception exc) {

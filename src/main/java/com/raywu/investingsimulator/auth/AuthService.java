@@ -1,9 +1,6 @@
 package com.raywu.investingsimulator.auth;
 
-import com.raywu.investingsimulator.auth.dto.CheckAuthResponse;
-import com.raywu.investingsimulator.auth.dto.SignInRequest;
-import com.raywu.investingsimulator.auth.dto.UserInfo;
-import com.raywu.investingsimulator.auth.dto.SignUpRequest;
+import com.raywu.investingsimulator.auth.dto.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
@@ -24,4 +21,6 @@ public interface AuthService {
     HttpHeaders refreshTokens(String email, int id);
 
     ResponseEntity<CheckAuthResponse> checkAuth();
+
+     ResponseEntity<SignOutResponse> signOut();
 }

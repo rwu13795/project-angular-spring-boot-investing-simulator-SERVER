@@ -76,13 +76,13 @@ public class TokenProvider_impl implements TokenProvider {
         return claims.getSubject();
     }
 
-    @Override
-    public LocalDateTime getExpiryDateFromToken(String token) {
-        // the "Jwts.parser()" is deprecated, need to use "parserBuilder()"
-        Claims claims = Jwts.parserBuilder().setSigningKey(tokenSecret).build()
-                .parseClaimsJws(token).getBody();
-        return LocalDateTime.ofInstant(claims.getExpiration().toInstant(), ZoneId.systemDefault());
-    }
+//    @Override
+//    public LocalDateTime getExpiryDateFromToken(String token) {
+//        // the "Jwts.parser()" is deprecated, need to use "parserBuilder()"
+//        Claims claims = Jwts.parserBuilder().setSigningKey(tokenSecret).build()
+//                .parseClaimsJws(token).getBody();
+//        return LocalDateTime.ofInstant(claims.getExpiration().toInstant(), ZoneId.systemDefault());
+//    }
 
     @Override
     public boolean validateToken(String token) {
