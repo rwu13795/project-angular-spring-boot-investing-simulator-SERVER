@@ -8,8 +8,8 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@Table(name = "transaction_short_sell")
-public class TransactionShortSell {
+@Table(name = "transaction_short_selling")
+public class TransactionShortSell extends TransactionTemplate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -33,8 +33,11 @@ public class TransactionShortSell {
     @Column(name = "realized_gain_loss")
     private double realizedGainLoss;
 
-    @Column(name = "date")
-    private String date;
+    @Column(name = "asset_total_realized_gain_loss")
+    private double assetTotalRealizedGainLoss;
+
+    @Column(name = "timestamp")
+    private long timestamp;
 
     public TransactionShortSell() {}
 }

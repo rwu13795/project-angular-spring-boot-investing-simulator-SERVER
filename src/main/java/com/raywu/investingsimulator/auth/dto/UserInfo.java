@@ -10,12 +10,12 @@ public class UserInfo {
     private int id;
     private String email;
     private double fund;
-    private String joinedAt;
+    private long joinedAt;
 
     public UserInfo(Account account) {
         this.id = account.getId();
         this.email = account.getEmail();
         this.fund = account.getFund();
-        this.joinedAt =account.getJoinedAt();
+        this.joinedAt = account.getJoinedAt();
     }
 }

@@ -69,23 +69,23 @@ public class AuthService_impl implements AuthService{
         // ---- NOTE ---- //
         // You have to set the employee id to 0, to let Hibernate know that we are
         // create a new employee entry (because we use saveOrUpdate in the DAO)
-//        Account newAccount = new Account();
-//        newAccount.setId(0);
-//        newAccount.setEmail(email);
-//        newAccount.setFund(100000);
-//
-//        String encryptedPassword = new BCryptPasswordEncoder().encode(password);
-//        newAccount.setPassword(encryptedPassword);
-//
-//        accountService.save(newAccount);
-//
-//        // generate JWT
-//        HttpHeaders responseHeaders = addCookiesToHeaders(email, newAccount.getId(),true);
-//
+        Account newAccount = new Account();
+        newAccount.setId(0);
+        newAccount.setEmail(email);
+        newAccount.setFund(100000);
+        newAccount.setJoinedAt(System.currentTimeMillis());
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(password);
+        newAccount.setPassword(encryptedPassword);
+
+        accountService.save(newAccount);
+
+        // generate JWT
+        HttpHeaders responseHeaders = addCookiesToHeaders(email, newAccount.getId(),true);
 
         return ResponseEntity.ok()
-//                .headers(responseHeaders)
-                .body(new UserInfo(999,"test@pass.com",1000, "test date"));
+                .headers(responseHeaders)
+                .body(new UserInfo(newAccount));
     }
     @Override
     public ResponseEntity<SignOutResponse> signOut() {

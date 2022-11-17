@@ -10,4 +10,5 @@ public class TransactionRequest {
     private int shares;
     private double priceLimit;
     private String type;
+    private String exchange;
 }

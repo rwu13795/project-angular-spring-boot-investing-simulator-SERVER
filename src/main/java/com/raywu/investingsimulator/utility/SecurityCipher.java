@@ -42,8 +42,6 @@ public class SecurityCipher {
     public static String encrypt(String strToEncrypt) {
         if (strToEncrypt == null) return null;
 
-        System.out.println("token to be encrypt-------" + strToEncrypt);
-
         try {
             setKey();
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
@@ -59,8 +57,6 @@ public class SecurityCipher {
 
 
     public static String decrypt(String strToDecrypt) {
-        System.out.println("strToDecrypt-------" + strToDecrypt);
-
         if (strToDecrypt == null) return null;
 
         try {

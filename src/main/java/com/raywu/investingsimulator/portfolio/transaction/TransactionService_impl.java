@@ -1,8 +1,10 @@
 package com.raywu.investingsimulator.portfolio.transaction;
 
+import com.raywu.investingsimulator.portfolio.dto.TransactionGainLoss;
+import com.raywu.investingsimulator.portfolio.dto.TransactionType;
 import com.raywu.investingsimulator.portfolio.transaction.entity.TransactionShortSell;
 import com.raywu.investingsimulator.portfolio.dto.TransactionRequest;
-import com.raywu.investingsimulator.portfolio.dto.TransactionType;
+import com.raywu.investingsimulator.portfolio.transaction.entity.TransactionTemplate;
 import com.raywu.investingsimulator.portfolio.transaction.entity.Transaction;
 import com.raywu.investingsimulator.portfolio.transaction.repository.TransactionRepository;
 import com.raywu.investingsimulator.portfolio.transaction.repository.TransactionShortSellRepository;
@@ -37,7 +39,7 @@ public class TransactionService_impl implements TransactionService{
 
     @Override
     public Transaction addNewTransaction(int userId, double currentPrice,
-                                  TransactionRequest tr, double realizedGainLoss) {
+                                  TransactionRequest tr, TransactionGainLoss transactionGainLoss) {
 
         boolean buy = tr.getType().equals(TransactionType.BUY.name());
 
@@ -48,7 +50,9 @@ public class TransactionService_impl implements TransactionService{
         transaction.setBuy(buy);
         transaction.setPricePerShare(currentPrice);
         transaction.setShares(tr.getShares());
-        transaction.setRealizedGainLoss(realizedGainLoss);
+        transaction.setRealizedGainLoss(transactionGainLoss.getRealizedGainLoss());
+        transaction.setTimestamp(System.currentTimeMillis());
+        transaction.setAssetTotalRealizedGainLoss(transactionGainLoss.getAssetTotalRealizedGainLoss());
 
         saveTransaction(transaction);
         return transaction;
@@ -56,7 +60,7 @@ public class TransactionService_impl implements TransactionService{
 
     @Override
     public TransactionShortSell addNewTransactionShortSell(int userId, double currentPrice,
-                                  TransactionRequest tr, double realizedGainLoss) {
+                                  TransactionRequest tr, TransactionGainLoss transactionGainLoss) {
 
         boolean shortSell = tr.getType().equals(TransactionType.SELL_SHORT.name());
 
@@ -67,9 +71,31 @@ public class TransactionService_impl implements TransactionService{
         transactionSS.setShortSell(shortSell);
         transactionSS.setPricePerShare(currentPrice);
         transactionSS.setShares(tr.getShares());
-        transactionSS.setRealizedGainLoss(realizedGainLoss);
+        transactionSS.setRealizedGainLoss(transactionGainLoss.getRealizedGainLoss());
+        transactionSS.setTimestamp(System.currentTimeMillis());
+        transactionSS.setAssetTotalRealizedGainLoss(transactionGainLoss.getAssetTotalRealizedGainLoss());
 
         saveTransactionShortSell(transactionSS);
         return transactionSS;
+    }
+
+    @Override
+    public List<? extends TransactionTemplate> getTransactionsByPage(int userId, String symbol, int pageNum, String type) {
+        final int ITEM_PER_PAGE = 20;
+        int offset = (pageNum - 1) * ITEM_PER_PAGE;
+
+        if(type.equals("holding")){
+            return transactionRepository.findByPageNum(userId, symbol, offset);
+        } else {
+            return transactionShortSellRepository.findByPageNum(userId, symbol, offset);
+        }
+    }
+    @Override
+    public long getTransactionsCount(int userId, String symbol, String type) {
+        if(type.equals("holding")){
+            return transactionRepository.getCount(userId, symbol);
+        } else {
+            return transactionShortSellRepository.getCount(userId, symbol);
+        }
     }
 }

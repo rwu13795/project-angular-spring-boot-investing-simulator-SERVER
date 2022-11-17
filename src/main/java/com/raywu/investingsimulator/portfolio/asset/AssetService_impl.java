@@ -1,6 +1,7 @@
 package com.raywu.investingsimulator.portfolio.asset;
 
 import com.raywu.investingsimulator.exception.exceptions.BadRequestException;
+import com.raywu.investingsimulator.portfolio.dto.TransactionGainLoss;
 import com.raywu.investingsimulator.portfolio.dto.TransactionRequest;
 import com.raywu.investingsimulator.portfolio.dto.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +36,14 @@ public class AssetService_impl implements AssetService {
     }
 
     @Override
-    public double updateAsset(int userId, double currentPrice, TransactionRequest tr) {
+    public TransactionGainLoss updateAsset(int userId, double currentPrice, TransactionRequest tr) {
         Asset asset = findAssetBySymbol(userId, tr.getSymbol());
-        if(asset == null) asset = new Asset(userId, tr.getSymbol());
+        if(asset == null) asset = new Asset(userId, tr.getSymbol(), tr.getExchange());
+
+        TransactionGainLoss transactionGainLoss = new TransactionGainLoss();
 
         // need to return the realizedGainLoss for the transaction if user sell or buy_to_cover
+        // and record the current asset total realized gain/loss for the charts
         double realizedGainLoss = 0.0;
 
         switch (TransactionType.valueOf(tr.getType())) {
@@ -58,8 +62,14 @@ public class AssetService_impl implements AssetService {
                             ("Invalid shares number - trying to sell more shares than you own", "transaction");
                 }
                 asset.setShares(asset.getShares() - tr.getShares());
+
+                // record the realized gain/loss for this specific transaction
                 realizedGainLoss = (currentPrice - asset.getAvgCost()) * tr.getShares();
+
                 asset.setRealizedGainLoss(asset.getRealizedGainLoss() + realizedGainLoss);
+
+                // record the current total realized gain/loss in the transaction
+                transactionGainLoss.setAssetTotalRealizedGainLoss(asset.getRealizedGainLoss());
                 break;
             }
             case SELL_SHORT: {
@@ -77,8 +87,14 @@ public class AssetService_impl implements AssetService {
                             ("Invalid shares number - trying to buy more shares to cover than you owe", "transaction");
                 }
                 asset.setSharesBorrowed(asset.getSharesBorrowed() - tr.getShares());
+
+                // record the realized gain/loss for this specific transaction
                 realizedGainLoss = -(currentPrice - asset.getAvgBorrowed()) * tr.getShares();
-                asset.setRealizedGainLossShortSale(asset.getRealizedGainLossShortSale() + realizedGainLoss);
+
+                asset.setRealizedGainLossShortSelling(asset.getRealizedGainLossShortSelling() + realizedGainLoss);
+
+                // record the current total realized short sale gain/loss in the transaction
+                transactionGainLoss.setAssetTotalRealizedGainLoss(asset.getRealizedGainLossShortSelling());
                 break;
             }
             default: throw new BadRequestException("Invalid transaction type", "transaction");
@@ -86,7 +102,9 @@ public class AssetService_impl implements AssetService {
 
         saveAsset(asset);
 
-        return realizedGainLoss;
+        transactionGainLoss.setRealizedGainLoss(realizedGainLoss);
+
+        return transactionGainLoss;
     }
 
 }

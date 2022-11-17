@@ -2,6 +2,7 @@ package com.raywu.investingsimulator.portfolio.account;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 
@@ -26,7 +27,7 @@ public class Account {
     private double fund;
 
     @Column(name = "joined_at")
-    private String joinedAt;
+    private long joinedAt;
 
     // ------ Note ------ //
 //    @Transient

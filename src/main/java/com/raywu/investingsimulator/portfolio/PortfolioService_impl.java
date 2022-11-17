@@ -7,6 +7,7 @@ import com.raywu.investingsimulator.portfolio.account.AccountService;
 import com.raywu.investingsimulator.portfolio.asset.Asset;
 import com.raywu.investingsimulator.portfolio.asset.AssetService;
 import com.raywu.investingsimulator.portfolio.dto.AccountResponse;
+import com.raywu.investingsimulator.portfolio.dto.TransactionGainLoss;
 import com.raywu.investingsimulator.portfolio.dto.TransactionRequest;
 import com.raywu.investingsimulator.portfolio.dto.TransactionType;
 import com.raywu.investingsimulator.portfolio.transaction.entity.Transaction;
@@ -39,7 +40,9 @@ public class PortfolioService_impl implements PortfolioService {
         List<Asset> assets = assetService.findAllAssets(user_id);
 
         double totalRealizedGainLoss = 0.0;
+        double totalRealizedGainLoss_shortSelling = 0.0;
         double totalUnrealizedGainLoss = 0.0;
+        double totalUnrealizedGainLoss_shortSelling = 0.0;
         double shortSellingDeposit = 0.0;
         List<String> symbols = new ArrayList<>();
         HashMap<String, Asset> assetMap = new HashMap<>();
@@ -53,6 +56,7 @@ public class PortfolioService_impl implements PortfolioService {
             for(var asset : assets) {
                 assetMap.put(asset.getSymbol(), asset);
                 totalRealizedGainLoss += asset.getRealizedGainLoss();
+                totalRealizedGainLoss_shortSelling += asset.getRealizedGainLossShortSelling();
             }
 
             // calculate unrealized the gain/loss using the current quote for each asset
@@ -63,15 +67,22 @@ public class PortfolioService_impl implements PortfolioService {
                 double unrealized = (q.getPrice() - asset.getAvgCost()) * asset.getShares();
                 double unrealizedBorrowed = -(q.getPrice() - asset.getAvgBorrowed()) * asset.getSharesBorrowed();
                 shortSellingDeposit += q.getPrice() * asset.getSharesBorrowed();
+
                 asset.setUnrealizedGainLoss(unrealized);
                 asset.setUnrealizedGainLossBorrowed(unrealizedBorrowed);
-                totalUnrealizedGainLoss += (unrealized + unrealizedBorrowed);
+
+                totalUnrealizedGainLoss += unrealized;
+                totalUnrealizedGainLoss_shortSelling += unrealizedBorrowed;
             }
         }
 
         AccountResponse accountRes = new AccountResponse(account);
         accountRes.setTotalRealizedGainLoss(totalRealizedGainLoss);
+        accountRes.setTotalRealizedGainLoss_shortSelling(totalRealizedGainLoss_shortSelling);
+
         accountRes.setTotalUnrealizedGainLoss(totalUnrealizedGainLoss);
+        accountRes.setTotalUnrealizedGainLoss_shortSelling(totalUnrealizedGainLoss_shortSelling);
+
         // the deposit has to be 150% of all the short sale value
         accountRes.setShortSellingDeposit(shortSellingDeposit * 1.5);
         return new Portfolio(accountRes, symbols, assetMap);
@@ -92,12 +103,12 @@ public class PortfolioService_impl implements PortfolioService {
             if(currentPrice < tr.getPriceLimit()) throw new PriceLimitException(tr.getType());
         }
 
-        double realizedGainLoss = assetService.updateAsset(userId, currentPrice, tr);
+        TransactionGainLoss transactionGainLoss = assetService.updateAsset(userId, currentPrice, tr);
 
         Transaction transaction = transactionService
-                .addNewTransaction(userId, currentPrice, tr, realizedGainLoss);
+                .addNewTransaction(userId, currentPrice, tr, transactionGainLoss);
 
-        accountService.updateAccountFund(userId, currentPrice, tr, realizedGainLoss);
+        accountService.updateAccountFund(userId, currentPrice, tr, transactionGainLoss.getRealizedGainLoss());
 
         return transaction;
     }
@@ -117,12 +128,12 @@ public class PortfolioService_impl implements PortfolioService {
             }
         }
 
-        double realizedGainLoss = assetService.updateAsset(userId, currentPrice, tr);
+        TransactionGainLoss transactionGainLoss = assetService.updateAsset(userId, currentPrice, tr);
 
         TransactionShortSell transactionSS = transactionService
-                .addNewTransactionShortSell(userId, currentPrice, tr, realizedGainLoss);
+                .addNewTransactionShortSell(userId, currentPrice, tr, transactionGainLoss);
 
-        accountService.updateAccountFund(userId, currentPrice, tr, realizedGainLoss);
+        accountService.updateAccountFund(userId, currentPrice, tr, transactionGainLoss.getRealizedGainLoss());
 
         return transactionSS;
     }

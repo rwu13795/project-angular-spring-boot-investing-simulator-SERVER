@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "transaction")
-public class Transaction {
+public class Transaction extends TransactionTemplate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -33,8 +33,11 @@ public class Transaction {
     @Column(name = "realized_gain_loss")
     private double realizedGainLoss;
 
-    @Column(name = "date")
-    private String date;
+    @Column(name = "asset_total_realized_gain_loss")
+    private double assetTotalRealizedGainLoss;
+
+    @Column(name = "timestamp")
+    private long timestamp;
 
     public Transaction() {}
 }

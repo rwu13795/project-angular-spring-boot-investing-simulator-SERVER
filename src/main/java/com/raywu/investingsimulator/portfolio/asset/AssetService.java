@@ -1,5 +1,6 @@
 package com.raywu.investingsimulator.portfolio.asset;
 
+import com.raywu.investingsimulator.portfolio.dto.TransactionGainLoss;
 import com.raywu.investingsimulator.portfolio.dto.TransactionRequest;
 
 import java.util.List;
@@ -11,5 +12,5 @@ public interface AssetService {
 
     void saveAsset(Asset asset);
 
-    double updateAsset(int userId, double currentPrice, TransactionRequest tr);
+    TransactionGainLoss updateAsset(int userId, double currentPrice, TransactionRequest tr);
 }
