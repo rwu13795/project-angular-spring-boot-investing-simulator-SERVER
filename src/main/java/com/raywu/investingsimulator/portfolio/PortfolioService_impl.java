@@ -6,13 +6,12 @@ import com.raywu.investingsimulator.portfolio.account.Account;
 import com.raywu.investingsimulator.portfolio.account.AccountService;
 import com.raywu.investingsimulator.portfolio.asset.Asset;
 import com.raywu.investingsimulator.portfolio.asset.AssetService;
-import com.raywu.investingsimulator.portfolio.dto.AccountResponse;
-import com.raywu.investingsimulator.portfolio.dto.TransactionGainLoss;
-import com.raywu.investingsimulator.portfolio.dto.TransactionRequest;
-import com.raywu.investingsimulator.portfolio.dto.TransactionType;
+import com.raywu.investingsimulator.portfolio.dto.*;
 import com.raywu.investingsimulator.portfolio.transaction.entity.Transaction;
 import com.raywu.investingsimulator.portfolio.transaction.TransactionService;
 import com.raywu.investingsimulator.portfolio.transaction.entity.TransactionShortSell;
+import com.raywu.investingsimulator.portfolio.watchlist.Watchlist;
+import com.raywu.investingsimulator.portfolio.watchlist.WatchlistService;
 import com.raywu.investingsimulator.stock.price.PriceService;
 import com.raywu.investingsimulator.stock.price.dto.ShortQuote;
 import org.apache.tomcat.util.buf.StringUtils;
@@ -33,6 +32,9 @@ public class PortfolioService_impl implements PortfolioService {
     private AssetService assetService;
     @Autowired
     private TransactionService transactionService;
+
+    @Autowired
+    private WatchlistService watchlistService;
 
     @Override
     public Portfolio getPortfolio(int user_id) {
@@ -85,7 +87,9 @@ public class PortfolioService_impl implements PortfolioService {
 
         // the deposit has to be 150% of all the short sale value
         accountRes.setShortSellingDeposit(shortSellingDeposit * 1.5);
-        return new Portfolio(accountRes, symbols, assetMap);
+
+        HashMap<String, String> watchlist = watchlistService.getWatchlist(user_id);
+        return new Portfolio(accountRes, symbols, assetMap, watchlist);
     }
 
     @Override

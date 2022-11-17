@@ -14,4 +14,5 @@ public class Portfolio {
     private AccountResponse account;
     private List<String> symbols;
     private HashMap<String, Asset> assets;
+    private HashMap<String, String> watchlist;
 }
