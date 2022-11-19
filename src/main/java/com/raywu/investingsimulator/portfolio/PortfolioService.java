@@ -10,4 +10,5 @@ public interface PortfolioService {
     Transaction buyAndSell(int userId, TransactionRequest tr);
 
     TransactionShortSell shortSellAndBuyToCover(int userId, TransactionRequest tr);
+
 }

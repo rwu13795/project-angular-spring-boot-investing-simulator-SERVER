@@ -15,7 +15,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
     List<Transaction> findByUserIdAndSymbol(int userId, String symbol);
 
     @Query(value = "SELECT * FROM TRANSACTION t WHERE t.user_id = ?1 and t.symbol = ?2 "
-            + " LIMIT 20 OFFSET ?3",
+            + " ORDER BY t.timestamp DESC LIMIT 20 OFFSET ?3",
             nativeQuery = true)
     List<Transaction> findByPageNum(int userId, String symbol, int offset);
 

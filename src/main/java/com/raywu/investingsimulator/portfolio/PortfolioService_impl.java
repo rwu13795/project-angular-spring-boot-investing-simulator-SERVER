@@ -32,7 +32,6 @@ public class PortfolioService_impl implements PortfolioService {
     private AssetService assetService;
     @Autowired
     private TransactionService transactionService;
-
     @Autowired
     private WatchlistService watchlistService;
 
@@ -98,6 +97,8 @@ public class PortfolioService_impl implements PortfolioService {
         double currentPrice = list[0].getPrice();
         Portfolio portfolio = getPortfolio(userId);
 
+        this.watchlistService.removeFromList(userId, tr.getSymbol());
+
         if(tr.getType().equals(TransactionType.BUY.name())) {
             if(currentPrice > tr.getPriceLimit()) throw new PriceLimitException(tr.getType());
             if(!hasEnoughFund(portfolio, tr.getShares() * currentPrice, false)) {
@@ -122,6 +123,8 @@ public class PortfolioService_impl implements PortfolioService {
         ShortQuote[] list = priceService.fetchShortQuoteList(tr.getSymbol());
         double currentPrice = list[0].getPrice();
         Portfolio portfolio = getPortfolio(userId);
+
+        this.watchlistService.removeFromList(userId, tr.getSymbol());
 
         if(tr.getType().equals(TransactionType.BUY_TO_COVER.name())) {
             if(currentPrice > tr.getPriceLimit()) throw new PriceLimitException(tr.getType());

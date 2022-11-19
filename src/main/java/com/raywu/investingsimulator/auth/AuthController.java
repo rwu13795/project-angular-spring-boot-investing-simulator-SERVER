@@ -71,22 +71,6 @@ public class AuthController {
         return account;
     }
 
-    @DeleteMapping("/account/{id}")
-    public String deleteById(@PathVariable int id) {
-
-        // check if the employee which is being deleted exists in the DB
-        Account account = accountService.findById(id);
-
-        if(account == null) {
-//            throw new TestException("account id not found - " + id);
-            throw new RuntimeException("account id not found - " + id);
-        }
-
-        accountService.deleteById(id);
-
-        return "account id-" + id + " has been deleted";
-    }
-
     @GetMapping("/reset-password-link")
     public void sendResetPasswordLink() throws IOException {
 

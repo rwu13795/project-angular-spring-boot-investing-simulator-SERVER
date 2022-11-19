@@ -1,5 +1,6 @@
 package com.raywu.investingsimulator.portfolio.watchlist;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
 @Setter
 @Table(name = "asset")
 @IdClass(WatchlistPK.class)
+@AllArgsConstructor
 public class Watchlist implements Serializable {
     @Id
     @Column(name = "user_id")

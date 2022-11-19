@@ -84,7 +84,7 @@ public class TransactionService_impl implements TransactionService{
         final int ITEM_PER_PAGE = 20;
         int offset = (pageNum - 1) * ITEM_PER_PAGE;
 
-        if(type.equals("holding")){
+        if(type.equals("long")){
             return transactionRepository.findByPageNum(userId, symbol, offset);
         } else {
             return transactionShortSellRepository.findByPageNum(userId, symbol, offset);
@@ -92,7 +92,7 @@ public class TransactionService_impl implements TransactionService{
     }
     @Override
     public long getTransactionsCount(int userId, String symbol, String type) {
-        if(type.equals("holding")){
+        if(type.equals("long")){
             return transactionRepository.getCount(userId, symbol);
         } else {
             return transactionShortSellRepository.getCount(userId, symbol);
