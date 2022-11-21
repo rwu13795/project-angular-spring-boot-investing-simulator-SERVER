@@ -100,7 +100,7 @@ public class AuthService_impl implements AuthService{
     public ResponseEntity<Void> changePassword(ChangePasswordRequest request) {
         String email = request.getEmail();
         String oldPassword = request.getPassword();
-        String newPassword = request.getNewPassword();
+        String newPassword = request.getNew_password();
 
         System.out.println(email);
 

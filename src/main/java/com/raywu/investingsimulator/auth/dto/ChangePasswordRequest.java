@@ -12,11 +12,11 @@ public class ChangePasswordRequest {
 
     private String password;
     @Size(min=8, max=20, message="Password must be between 8 and 20 characters in length")
-    private String newPassword;
+    private String new_password;
     @Size(min=8, max=20, message="Password must be between 8 and 20 characters in length")
-    private String confirmPassword;
+    private String confirm_password;
 
     public boolean passwordsMatched() {
-        return newPassword.equals(confirmPassword);
+        return new_password.equals(confirm_password);
     }
 }

@@ -12,7 +12,7 @@ public class PasswordsNotMatchedException extends CustomException {
         super("The passwords do not match");
 
         errorResponse.setMessage("The passwords do not match");
-        errorResponse.setField(ErrorResponse.ErrorField.confirmPassword.name());
+        errorResponse.setField(ErrorResponse.ErrorField.confirm_password.name());
         errorResponse.setTimeStamp(System.currentTimeMillis());
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
     }
