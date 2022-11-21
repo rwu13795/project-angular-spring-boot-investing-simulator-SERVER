@@ -16,9 +16,11 @@ public interface AuthService {
 
     ResponseEntity<UserInfo> getUserInfo(String email, int id);
 
+    ResponseEntity<Void> changePassword(ChangePasswordRequest request);
+
     String validateJWT(HttpServletRequest request);
 
-    HttpHeaders refreshTokens(String email, int id);
+    HttpHeaders refreshAccessToken(String email, int id);
 
     ResponseEntity<CheckAuthResponse> checkAuth();
 

@@ -102,7 +102,7 @@ public class PortfolioService_impl implements PortfolioService {
         if(tr.getType().equals(TransactionType.BUY.name())) {
             if(currentPrice > tr.getPriceLimit()) throw new PriceLimitException(tr.getType());
             if(!hasEnoughFund(portfolio, tr.getShares() * currentPrice, false)) {
-                throw new NotEnoughFundException(tr.getType());
+                throw new NotEnoughFundException("FUND");
             }
         } else {
             if(currentPrice < tr.getPriceLimit()) throw new PriceLimitException(tr.getType());
@@ -131,7 +131,7 @@ public class PortfolioService_impl implements PortfolioService {
         } else {
             if(currentPrice < tr.getPriceLimit()) throw new PriceLimitException(tr.getType());
             if(!hasEnoughFund(portfolio, tr.getShares() * currentPrice, true)) {
-                throw new NotEnoughFundException(tr.getType());
+                throw new NotEnoughFundException("FUND");
             }
         }
 

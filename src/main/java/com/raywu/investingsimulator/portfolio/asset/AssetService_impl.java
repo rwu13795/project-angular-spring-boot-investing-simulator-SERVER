@@ -54,12 +54,14 @@ public class AssetService_impl implements AssetService {
                 double newAvg = (previousTotal + orderTotal) / newShares;
                 asset.setShares(newShares);
                 asset.setAvgCost(newAvg);
+
+                transactionGainLoss.setAssetTotalRealizedGainLoss(asset.getRealizedGainLoss());
                 break;
             }
             case SELL: {
                 if(asset.getShares() < tr.getShares()) {
                     throw new BadRequestException
-                            ("Invalid shares number - trying to sell more shares than you own", "transaction");
+                            ("You are trying to sell more shares than you own", "QUANTITY");
                 }
                 asset.setShares(asset.getShares() - tr.getShares());
 
@@ -79,12 +81,14 @@ public class AssetService_impl implements AssetService {
                 double newAvg = (previousTotal + orderTotal) / newShares;
                 asset.setSharesBorrowed(newShares);
                 asset.setAvgBorrowed(newAvg);
+
+                transactionGainLoss.setAssetTotalRealizedGainLoss(asset.getRealizedGainLossShortSelling());
                 break;
             }
             case BUY_TO_COVER: {
                 if(asset.getSharesBorrowed() < tr.getShares()) {
                     throw new BadRequestException
-                            ("Invalid shares number - trying to buy more shares to cover than you owe", "transaction");
+                            ("You are trying to cover more shares than you borrowed", "QUANTITY");
                 }
                 asset.setSharesBorrowed(asset.getSharesBorrowed() - tr.getShares());
 

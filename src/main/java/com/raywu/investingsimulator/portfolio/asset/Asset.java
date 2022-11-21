@@ -41,6 +41,9 @@ public class Asset implements Serializable {
     @Column(name = "realized_gain_loss_short_selling")
     private double realizedGainLossShortSelling;
 
+    @Column(name = "timestamp")
+    private long timestamp;
+
     @Transient
     private double unrealizedGainLoss;
 
@@ -64,5 +67,6 @@ public class Asset implements Serializable {
         this.sharesBorrowed = 0;
         this.realizedGainLoss = 0;
         this.realizedGainLossShortSelling = 0;
+        this.timestamp = System.currentTimeMillis();
     }
 }

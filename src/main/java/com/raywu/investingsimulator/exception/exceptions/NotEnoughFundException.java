@@ -9,9 +9,9 @@ public class NotEnoughFundException extends CustomException {
     private ErrorResponse errorResponse = new ErrorResponse();
 
     public NotEnoughFundException(String type) {
-        super("You do not have sufficient fund to place the order");
+        super("You do not have sufficient fund to place this order");
 
-        errorResponse.setMessage("You do not have sufficient fund to place the order");
+        errorResponse.setMessage("You do not have sufficient fund to place this order");
         errorResponse.setField(type);
         errorResponse.setTimeStamp(System.currentTimeMillis());
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());

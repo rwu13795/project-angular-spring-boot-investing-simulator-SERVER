@@ -21,7 +21,7 @@ import java.util.Date;
 public class TokenProvider_impl implements TokenProvider {
 
     private final Key tokenSecret;
-    private final Long tokenExpirationMS = (long) (1000 * 60 * 3);  // 1-hour
+    private final Long tokenExpirationMS = (long) (1000 * 60 * 60);  // 1-hour
     private final Long refreshTokenExpirationMS = (long) (1000 * 60 * 60 * 24 * 7); // 7-days
 
 

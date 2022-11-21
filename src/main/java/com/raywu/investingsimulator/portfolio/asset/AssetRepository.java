@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface AssetRepository extends JpaRepository<Asset, AssetPK> {
 
-    @Query(value = "SELECT * FROM asset a WHERE a.user_id = ?1",
+    @Query(value = "SELECT * FROM asset a WHERE a.user_id = ?1 ORDER BY a.timestamp DESC",
             nativeQuery = true)
     List<Asset> findAllAssets(int userId);
 

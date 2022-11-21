@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.HashMap;
 
 @Service
@@ -96,12 +97,38 @@ public class AuthService_impl implements AuthService{
     }
 
     @Override
+    public ResponseEntity<Void> changePassword(ChangePasswordRequest request) {
+        String email = request.getEmail();
+        String oldPassword = request.getPassword();
+        String newPassword = request.getNewPassword();
+
+        System.out.println(email);
+
+        Account existedAcct = accountService.findByEmail(email);
+        if(existedAcct == null) throw new BadRequestException("Invalid email from an authenticated user!?", "email");
+
+        if(!new BCryptPasswordEncoder().matches(oldPassword, existedAcct.getPassword())) {
+            throw new IncorrectPasswordException();
+        }
+
+        if(!request.passwordsMatched()) throw new PasswordsNotMatchedException();
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(newPassword);
+
+        existedAcct.setPassword(encryptedPassword);
+
+        accountService.save(existedAcct);
+
+        return ResponseEntity.ok().body(null);
+    }
+
+    @Override
     public ResponseEntity<UserInfo> getUserInfo(String email, int id) {
         Account existedAcct = accountService.findByEmail(email);
         if(existedAcct == null) {
             throw new InvalidTokenException("Invalid email in the token");
         }
-        HttpHeaders headers = refreshTokens(email, id);
+        HttpHeaders headers = refreshAccessToken(email, id);
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(new UserInfo(existedAcct));
@@ -149,12 +176,9 @@ public class AuthService_impl implements AuthService{
         return tokenProvider.getUserInfoFromToken(jwt);
     }
     @Override
-    public HttpHeaders refreshTokens(String email, int id) {
+    public HttpHeaders refreshAccessToken(String email, int id) {
+
         return addCookiesToHeaders(email, id, false);
-    }
-
-    public void resetPasswordLink() {
-
     }
 
     private HttpHeaders addCookiesToHeaders(String email, int id, boolean newRefresh) {

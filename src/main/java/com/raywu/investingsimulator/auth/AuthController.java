@@ -61,14 +61,9 @@ public class AuthController {
         return authService.checkAuth();
     }
 
-    @PutMapping("/account")
-    public Account updateUser(@RequestBody Account account) {
-        // ---- VERY IMPORTANT ---- //
-        // for updating the existing employee, we need to include the ID in the request body
-        // (unlike creating a new employee entry, we DO NOT include the ID)
-        accountService.save(account);
-
-        return account;
+    @PutMapping("/change-password")
+    public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        return authService.changePassword(request);
     }
 
     @GetMapping("/reset-password-link")
@@ -76,27 +71,5 @@ public class AuthController {
 
         sendGridService.sendResetPasswordLink();
     }
-
-//    // test the custom employeeRepository findByEmail query
-//    @GetMapping("/users/last-name/{lastName}")
-//    public Account findByLastName(@PathVariable String lastName) {
-//
-//        // NOTE - the last name is case sensitive
-//        return userService.findByLastName(lastName);
-//    }
-//
-//
-//    // test the custom employeeRepository getUserByPage query
-//    @GetMapping("/users/page/{pageNum}")
-//    public List<Account> getUsersByPage(@PathVariable int pageNum) {
-//
-//        // NOTE - the last name is case sensitive
-//        return userService.getUsersByPage(pageNum);
-//    }
-
-
-
-
-
 
 }

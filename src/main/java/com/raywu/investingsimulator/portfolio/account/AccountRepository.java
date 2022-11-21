@@ -16,22 +16,21 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 // JpaRepository will automatically build the method for us by using the query we supply
 
 // create a custom findByEmail method using native SQL
-@Query(value = "SELECT * FROM EMPLOYEE u WHERE u.last_name = ?1",
+    @Query(value = "SELECT * FROM EMPLOYEE u WHERE u.last_name = ?1",
         nativeQuery = true)
     Optional<Account> findByLastName(String lastName);
         // NOTE - the last name is case-sensitive
 
-        // The JpaRepository can automatically create some simple CRUD query for us
-        // such as findByColumnName(column data)
-        Optional<Account> findByEmail(String email);
+    // The JpaRepository can automatically create some simple CRUD query for us
+    // such as findByColumnName(column data)
+    Optional<Account> findByEmail(String email);
 
 
-
-// create a custom getEmployeesByPage method using native SQL
-@Query(value = "SELECT * FROM EMPLOYEE LIMIT ?1 OFFSET ?2",
-        nativeQuery = true)
+    // create a custom getEmployeesByPage method using native SQL
+    @Query(value = "SELECT * FROM EMPLOYEE LIMIT ?1 OFFSET ?2",
+            nativeQuery = true)
     List<Account> getUsersByPage(int limit, int offset);
-        // Limit = items_per_page
-        // OFFSET = (pageNum - 1) * Limit
+    // Limit = items_per_page
+    // OFFSET = (pageNum - 1) * Limit
 
 }
