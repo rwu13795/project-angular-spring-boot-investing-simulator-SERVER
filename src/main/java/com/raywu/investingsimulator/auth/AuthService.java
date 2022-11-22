@@ -24,5 +24,9 @@ public interface AuthService {
 
     ResponseEntity<CheckAuthResponse> checkAuth();
 
-     ResponseEntity<SignOutResponse> signOut();
+    ResponseEntity<SignOutResponse> signOut();
+
+    ResponseEntity<String> generatePasswordResetLink(String email);
+
+    ResponseEntity<HashMap<String, String>> validatePasswordResetToken(String token);
 }

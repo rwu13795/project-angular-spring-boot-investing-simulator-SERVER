@@ -29,7 +29,8 @@ public class WatchlistService_impl implements WatchlistService {
 
     @Override
     public void addToList(int userId, String symbol, String exchange){
-        this.watchlistRepository.addToList(userId, symbol, exchange);
+        long timestamp = System.currentTimeMillis();
+        this.watchlistRepository.addToList(userId, symbol, exchange, timestamp);
     }
 
     @Override

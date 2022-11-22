@@ -2,6 +2,7 @@ package com.raywu.investingsimulator.auth;
 
 import com.raywu.investingsimulator.auth.dto.*;
 import com.raywu.investingsimulator.auth.sendgrid.SendGridService;
+import com.raywu.investingsimulator.exception.exceptions.InvalidTokenException;
 import com.raywu.investingsimulator.portfolio.account.Account;
 import com.raywu.investingsimulator.portfolio.account.AccountService;
 import com.raywu.investingsimulator.utility.SecurityCipher;
@@ -66,10 +67,24 @@ public class AuthController {
         return authService.changePassword(request);
     }
 
-    @GetMapping("/reset-password-link")
-    public void sendResetPasswordLink() throws IOException {
-
-        sendGridService.sendResetPasswordLink();
+    @PostMapping("/reset-password-request")
+    public  ResponseEntity<String> generatePasswordResetLink
+            (@RequestBody HashMap<String, String> body) throws IOException {
+//        sendGridService.sendResetPasswordLink();
+        return authService.generatePasswordResetLink(body.get("email"));
     }
 
+    @PostMapping("/reset-password")
+    public ResponseEntity<HashMap<String, String>> validatePasswordResetToken
+            (@RequestBody HashMap<String, String> body) {
+
+        return authService.validatePasswordResetToken(body.get("token"));
+    }
+
+//    @PutMapping("/reset-password")
+////    public  ResponseEntity<Void> resetPassword(@Valid @RequestBody String token) {
+////
+//////        return authService.validatePasswordResetToken(token);
+////        return null;
+////    }
 }

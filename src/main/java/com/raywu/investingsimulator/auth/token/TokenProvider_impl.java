@@ -21,8 +21,6 @@ import java.util.Date;
 public class TokenProvider_impl implements TokenProvider {
 
     private final Key tokenSecret;
-    private final Long tokenExpirationMS = (long) (1000 * 60 * 60);  // 1-hour
-    private final Long refreshTokenExpirationMS = (long) (1000 * 60 * 60 * 24 * 7); // 7-days
 
 
     @Autowired
@@ -31,13 +29,25 @@ public class TokenProvider_impl implements TokenProvider {
     }
 
     @Override
-    public Token generateAccessToken(String email, int id) {
+    public Token generateToken(String email, int userId, Token.TokenType tokenType) {
+        final long accessTokenExpirationMS = 1000 * 60 * 60;  // 1-hour
+        final long refreshTokenExpirationMS = 1000 * 60 * 60 * 24 * 14; // 14-days
+        final long resetLinkTokenExpirationMS = 1000 * 60 * 10; // 10-min
+
+        long duration = 0;
+        switch (tokenType) {
+            case ACCESS -> duration = accessTokenExpirationMS;
+            case REFRESH -> duration = refreshTokenExpirationMS;
+            case PW_RESET -> {
+                duration = resetLinkTokenExpirationMS;
+            }
+        }
+
         Date now = new Date();
-        long duration = tokenExpirationMS;
         Date expiryDate = new Date(now.getTime() + duration);
         // Since setSubject() only accepts String, I need to concat the email and id "{email}_{id}"
         // then split this string after parsing the JWT in the filter
-        String emailAndId = email + "_" + id;
+        String emailAndId = email + "_" + userId;
 
         String token = Jwts.builder()
                 .setSubject(emailAndId)
@@ -46,26 +56,26 @@ public class TokenProvider_impl implements TokenProvider {
                 .signWith(tokenSecret, SignatureAlgorithm.HS256)
                 .compact();
 
-        return new Token(Token.TokenType.ACCESS, token, duration,
+        return new Token(tokenType, token, duration,
                 LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault()));
     }
 
-    @Override
-    public Token generateRefreshToken(String email, int id) {
-        Date now = new Date();
-        long duration = refreshTokenExpirationMS;
-        Date expiryDate = new Date(now.getTime() + duration);
-        String emailAndId = email + "_" + id;
-
-        String token = Jwts.builder()
-                .setSubject(emailAndId)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(tokenSecret, SignatureAlgorithm.HS256)
-                .compact();
-        return new Token(Token.TokenType.REFRESH, token, duration,
-                LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault()));
-    }
+//    @Override
+//    public Token generateRefreshToken(String email, int id) {
+//        Date now = new Date();
+//        long duration = refreshTokenExpirationMS;
+//        Date expiryDate = new Date(now.getTime() + duration);
+//        String emailAndId = email + "_" + id;
+//
+//        String token = Jwts.builder()
+//                .setSubject(emailAndId)
+//                .setIssuedAt(now)
+//                .setExpiration(expiryDate)
+//                .signWith(tokenSecret, SignatureAlgorithm.HS256)
+//                .compact();
+//        return new Token(Token.TokenType.REFRESH, token, duration,
+//                LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault()));
+//    }
 
     @Override
     public String getUserInfoFromToken(String token) {
@@ -76,17 +86,17 @@ public class TokenProvider_impl implements TokenProvider {
         return claims.getSubject();
     }
 
-//    @Override
-//    public LocalDateTime getExpiryDateFromToken(String token) {
-//        // the "Jwts.parser()" is deprecated, need to use "parserBuilder()"
-//        Claims claims = Jwts.parserBuilder().setSigningKey(tokenSecret).build()
-//                .parseClaimsJws(token).getBody();
-//        return LocalDateTime.ofInstant(claims.getExpiration().toInstant(), ZoneId.systemDefault());
-//    }
+    @Override
+    public LocalDateTime getExpiryDateFromToken(String token) {
+        // the "Jwts.parser()" is deprecated, need to use "parserBuilder()"
+        Claims claims = Jwts.parserBuilder().setSigningKey(tokenSecret).build()
+                .parseClaimsJws(token).getBody();
+        return LocalDateTime.ofInstant(claims.getExpiration().toInstant(), ZoneId.systemDefault());
+    }
 
     @Override
     public boolean validateToken(String token) {
-        if(token == null) throw new InvalidTokenException("Invalid token");
+        if(token == null) throw new InvalidTokenException("Invalid token caught in - TokenProvider.validateToken");
 
         try {
             // the "Jwts.parser()" is deprecated, need to use "parserBuilder()"

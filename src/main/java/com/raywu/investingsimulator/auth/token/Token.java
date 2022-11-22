@@ -14,6 +14,6 @@ public class Token {
     private LocalDateTime expiryDate;
 
     public enum TokenType {
-        ACCESS, REFRESH
+        ACCESS, REFRESH, PW_RESET
     }
 }

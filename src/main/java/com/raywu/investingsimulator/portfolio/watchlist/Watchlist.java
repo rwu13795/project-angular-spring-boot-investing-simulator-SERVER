@@ -25,6 +25,9 @@ public class Watchlist implements Serializable {
     @Column(name = "exchange")
     private String exchange;
 
+    @Column(name = "timestamp")
+    private long timestamp;
+
     // no-arg constructor is required by Hibernate
     public Watchlist() {}
 }

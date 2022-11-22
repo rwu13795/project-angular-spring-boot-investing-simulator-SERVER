@@ -13,11 +13,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 @Service
@@ -139,6 +138,40 @@ public class AuthService_impl implements AuthService{
         return ResponseEntity.ok().body(new CheckAuthResponse(true));
     }
 
+    // Temp code
+    @Override
+    public ResponseEntity<String> generatePasswordResetLink(String email) {
+        if(email == null) throw new IncorrectEmailException();
+
+        Account existedAcct = accountService.findByEmail(email);
+        if(existedAcct == null) throw new IncorrectEmailException();
+
+        Token token = tokenProvider.generateToken(email, existedAcct.getId(), Token.TokenType.PW_RESET);
+        String encryptedToken = SecurityCipher.encrypt(token.getTokenString());
+
+        return ResponseEntity.ok().body(encryptedToken);
+    }
+
+    @Override
+    public ResponseEntity<HashMap<String, String>> validatePasswordResetToken(String token) {
+        System.out.println("token-----------" + token);
+        if(token == null) throw new InvalidTokenException("No reset token found");
+
+        String jwt = SecurityCipher.decrypt(token);
+
+        System.out.println("decrypted ---------- " + jwt);
+        if(!tokenProvider.validateToken(jwt)) throw new InvalidTokenException("Invalid reset token");
+
+        HashMap<String, String> expiry = new HashMap<>();
+        LocalDateTime timestamp = tokenProvider.getExpiryDateFromToken(jwt);
+
+        System.out.println(timestamp);
+
+        expiry.put("expiration", timestamp.toString());
+
+        return ResponseEntity.ok().body(expiry);
+    }
+
     @Override
     public String validateJWT(HttpServletRequest request){
         // extract the token from the "Cookie"
@@ -183,12 +216,12 @@ public class AuthService_impl implements AuthService{
 
     private HttpHeaders addCookiesToHeaders(String email, int id, boolean newRefresh) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        Token newAccessToken = tokenProvider.generateAccessToken(email, id);
+        Token newAccessToken = tokenProvider.generateToken(email, id, Token.TokenType.ACCESS);
         addAccessTokenCookie(responseHeaders, newAccessToken);
 
         // only add the refresh token when user signs in and only update the access token on API request
         if(newRefresh) {
-            Token newRefreshToken = tokenProvider.generateRefreshToken(email, id);
+            Token newRefreshToken = tokenProvider.generateToken(email, id, Token.TokenType.REFRESH);
             addRefreshTokenCookie(responseHeaders, newRefreshToken);
         }
         return responseHeaders;

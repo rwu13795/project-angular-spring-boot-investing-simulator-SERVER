@@ -12,6 +12,6 @@ public class ErrorResponse {
     public ErrorResponse() {}
 
     public enum ErrorField {
-        password, email, new_password, confirm_password
+        password, email, new_password, confirm_password, token
     }
 }
