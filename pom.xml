@@ -15,8 +15,8 @@
 	<description>An investing simulator project built with Spring Boot and Angular</description>
 	<properties>
 		<java.version>17</java.version>
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
+<!--		<maven.compiler.source>17</maven.compiler.source>-->
+<!--		<maven.compiler.target>17</maven.compiler.target>-->
 	</properties>
 	<dependencies>
 		<dependency>
@@ -117,14 +117,14 @@
 				</configuration>
 			</plugin>
 
-			<plugin>
-				<groupId>com.heroku.sdk</groupId>
-				<artifactId>heroku-maven-plugin</artifactId>
-				<version>3.0.5</version>
-				<configuration>
-					<jdkVersion>17</jdkVersion>
-				</configuration>
-			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>com.heroku.sdk</groupId>-->
+<!--				<artifactId>heroku-maven-plugin</artifactId>-->
+<!--				<version>3.10.1</version>-->
+<!--				<configuration>-->
+<!--					<jdkVersion>17</jdkVersion>-->
+<!--				</configuration>-->
+<!--			</plugin>-->
 		</plugins>
 	</build>
 
