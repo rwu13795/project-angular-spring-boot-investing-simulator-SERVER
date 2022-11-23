@@ -25,11 +25,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class AuthController {
     @Autowired
-    private AccountService accountService;
-    @Autowired
     private AuthService authService;
-    @Autowired
-    private SendGridService sendGridService;
 
     @PostMapping("/sign-in")
     public ResponseEntity<UserInfo> signIn(@Valid @RequestBody SignInRequest signInRequest) {
@@ -68,23 +64,22 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password-request")
-    public  ResponseEntity<String> generatePasswordResetLink
+    public  ResponseEntity<Void> generatePasswordResetLink
             (@RequestBody HashMap<String, String> body) throws IOException {
-//        sendGridService.sendResetPasswordLink();
+
         return authService.generatePasswordResetLink(body.get("email"));
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<HashMap<String, String>> validatePasswordResetToken
+    public ResponseEntity<ValidateTokenResponse> validatePasswordResetToken
             (@RequestBody HashMap<String, String> body) {
 
         return authService.validatePasswordResetToken(body.get("token"));
     }
 
-//    @PutMapping("/reset-password")
-////    public  ResponseEntity<Void> resetPassword(@Valid @RequestBody String token) {
-////
-//////        return authService.validatePasswordResetToken(token);
-////        return null;
-////    }
+    @PutMapping("/reset-password")
+    public  ResponseEntity<Void> resetPassword(@Valid @RequestBody SignUpRequest body) {
+
+        return authService.resetPassword(body);
+    }
 }

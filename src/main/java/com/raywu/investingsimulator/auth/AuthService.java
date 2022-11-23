@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.HashMap;
 
 
@@ -26,7 +27,9 @@ public interface AuthService {
 
     ResponseEntity<SignOutResponse> signOut();
 
-    ResponseEntity<String> generatePasswordResetLink(String email);
+    ResponseEntity<Void> generatePasswordResetLink(String email) throws IOException;
 
-    ResponseEntity<HashMap<String, String>> validatePasswordResetToken(String token);
+    ResponseEntity<ValidateTokenResponse> validatePasswordResetToken(String token);
+
+    ResponseEntity<Void> resetPassword(SignUpRequest request);
 }

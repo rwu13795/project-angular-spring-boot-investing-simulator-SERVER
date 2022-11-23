@@ -29,6 +29,9 @@ public class Account {
     @Column(name = "joined_at")
     private long joinedAt;
 
+    @Column(name = "can_reset_password")
+    private boolean canResetPassword;
+
     // ------ Note ------ //
 //    @Transient
 //    private double shortSellingDeposit;

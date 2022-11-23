@@ -15,18 +15,26 @@ import java.io.IOException;
 
 @Service
 public class SendGridService {
-    private SendGrid sendGridClient;
+    private final SendGrid sendGridClient;
 
     @Autowired
     public SendGridService(EnvVariable env) {
+
         this.sendGridClient = new SendGrid(env.SENDGRID_API_KEY());
     }
 
-    public void sendResetPasswordLink() throws IOException {
+    public void sendResetPasswordLink(String email, String token) throws IOException {
+
+        System.out.println(token);
+
+        String href = "<b><a href='http://localhost:4200/user/reset-password?token=" + token + "' >link</a></b>";
+        String link = "<div style='color: black;'>Please click this " + href
+                + " to open the page for resetting your password.</div>";
+
         Email from = new Email("rwu13795.work@gmail.com");
-        String subject = "Sending with SendGrid is Fun";
-        Email to = new Email("rwu13795@gmail.com");
-        Content content = new Content("text/plain", "and easy to do anywhere, even with Java");
+        String subject = "[Investing Simulator] Reset Password Link";
+        Email to = new Email(email);
+        Content content = new Content("text/html", link);
         Mail mail = new Mail(from, subject, to, content);
 
         Request request = new Request();

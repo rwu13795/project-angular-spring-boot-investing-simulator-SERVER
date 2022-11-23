@@ -1,6 +1,7 @@
 package com.raywu.investingsimulator.auth;
 
 import com.raywu.investingsimulator.auth.dto.*;
+import com.raywu.investingsimulator.auth.sendgrid.SendGridService;
 import com.raywu.investingsimulator.auth.token.Token;
 import com.raywu.investingsimulator.auth.token.TokenProvider;
 import com.raywu.investingsimulator.exception.exceptions.*;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -27,6 +29,8 @@ public class AuthService_impl implements AuthService{
     private TokenProvider tokenProvider;
     @Autowired
     private CookieHelper cookieHelper;
+    @Autowired
+    private SendGridService sendGridService;
 
 
     @Override
@@ -74,6 +78,7 @@ public class AuthService_impl implements AuthService{
         newAccount.setEmail(email);
         newAccount.setFund(100000);
         newAccount.setJoinedAt(System.currentTimeMillis());
+        newAccount.setCanResetPassword(false);
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(password);
         newAccount.setPassword(encryptedPassword);
@@ -140,36 +145,57 @@ public class AuthService_impl implements AuthService{
 
     // Temp code
     @Override
-    public ResponseEntity<String> generatePasswordResetLink(String email) {
+    public ResponseEntity<Void> generatePasswordResetLink(String email) throws IOException {
         if(email == null) throw new IncorrectEmailException();
 
         Account existedAcct = accountService.findByEmail(email);
         if(existedAcct == null) throw new IncorrectEmailException();
+        existedAcct.setCanResetPassword(true);
+        accountService.save(existedAcct);
 
         Token token = tokenProvider.generateToken(email, existedAcct.getId(), Token.TokenType.PW_RESET);
         String encryptedToken = SecurityCipher.encrypt(token.getTokenString());
 
-        return ResponseEntity.ok().body(encryptedToken);
+        sendGridService.sendResetPasswordLink(email, encryptedToken);
+
+        return ResponseEntity.ok().body(null);
     }
 
     @Override
-    public ResponseEntity<HashMap<String, String>> validatePasswordResetToken(String token) {
-        System.out.println("token-----------" + token);
+    public ResponseEntity<ValidateTokenResponse> validatePasswordResetToken(String token) {
         if(token == null) throw new InvalidTokenException("No reset token found");
 
         String jwt = SecurityCipher.decrypt(token);
 
-        System.out.println("decrypted ---------- " + jwt);
-        if(!tokenProvider.validateToken(jwt)) throw new InvalidTokenException("Invalid reset token");
+        if(!tokenProvider.validateToken(jwt)) throw new InvalidTokenException("Token is expired or invalid");
 
-        HashMap<String, String> expiry = new HashMap<>();
+        String email = tokenProvider.getUserInfoFromToken(jwt).split("_")[0];
+        // check if the user has used this link to reset the password before
+        Account account = accountService.findByEmail(email);
+        if(account == null) throw new BadRequestException("Invalid email from an valid token!?", "email");
+        if(!account.isCanResetPassword()) throw new InvalidTokenException("Token has been used");
+
         LocalDateTime timestamp = tokenProvider.getExpiryDateFromToken(jwt);
 
-        System.out.println(timestamp);
+        return ResponseEntity.ok().body(new ValidateTokenResponse(timestamp.toString(), email));
+    }
 
-        expiry.put("expiration", timestamp.toString());
+    @Override
+    public ResponseEntity<Void> resetPassword(SignUpRequest request) {
+        String email = request.getEmail();
+        String password = request.getPassword();
 
-        return ResponseEntity.ok().body(expiry);
+        Account existedAcct = accountService.findByEmail(email);
+        if(existedAcct == null) throw new BadRequestException("Invalid email from an valid token!?", "email");
+
+        if(!request.passwordsMatched()) throw new PasswordsNotMatchedException();
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(password);
+        existedAcct.setPassword(encryptedPassword);
+        existedAcct.setCanResetPassword(false);
+        accountService.save(existedAcct);
+
+        return ResponseEntity.ok().body(null);
     }
 
     @Override

@@ -25,7 +25,6 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     // such as findByColumnName(column data)
     Optional<Account> findByEmail(String email);
 
-
     // create a custom getEmployeesByPage method using native SQL
     @Query(value = "SELECT * FROM EMPLOYEE LIMIT ?1 OFFSET ?2",
             nativeQuery = true)
