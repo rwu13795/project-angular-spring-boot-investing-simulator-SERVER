@@ -41,7 +41,7 @@ public class SecurityConfig {
                 (Arrays.asList("http://localhost:4200",
                         "https://www.trading-simulator.live"));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedMethods(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE", "OPTIONS"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
