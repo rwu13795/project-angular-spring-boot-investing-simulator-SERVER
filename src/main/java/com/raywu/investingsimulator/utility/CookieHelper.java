@@ -15,8 +15,9 @@ public class CookieHelper {
                 // the "maxAge" is in seconds NOT millisecond
                 .maxAge(duration / 1000)
                 .httpOnly(true)
-                .secure(false)
-//                .domain("localhost")
+                .secure(true)
+                .sameSite(".trading-simulator.live")
+                .domain(".trading-simulator.live")
                 .path("/")
                 .build()
                 .toString();
@@ -27,8 +28,9 @@ public class CookieHelper {
         return ResponseCookie.from(refreshToken, encryptedToken)
                 .maxAge(duration / 1000)
                 .httpOnly(true)
-                .secure(false)
-//                .domain("localhost")
+                .secure(true)
+                .sameSite(".trading-simulator.live")
+                .domain(".trading-simulator.live")
                 .path("/")
                 .build()
                 .toString();
@@ -38,7 +40,9 @@ public class CookieHelper {
         return ResponseCookie.from(accessToken, "deleted")
                 .maxAge(0)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
+                .sameSite(".trading-simulator.live")
+                .domain(".trading-simulator.live")
                 .path("/")
                 .build()
                 .toString();
@@ -48,9 +52,28 @@ public class CookieHelper {
         return ResponseCookie.from(refreshToken, "deleted")
                 .maxAge(0)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
+                .sameSite(".trading-simulator.live")
+                .domain(".trading-simulator.live")
                 .path("/")
                 .build()
                 .toString();
     }
 }
+
+
+/*
+dev
+
+      return ResponseCookie.from(refreshToken, encryptedToken)
+                .maxAge(duration / 1000)
+                .httpOnly(true)
+                .secure(true)
+                .domain("localhost")
+                .path("/")
+                .build()
+                .toString();
+
+
+
+* */
