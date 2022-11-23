@@ -1,6 +1,5 @@
 package com.raywu.investingsimulator.utility;
 
-import org.springframework.http.HttpCookie;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 

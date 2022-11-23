@@ -25,8 +25,6 @@ public class SendGridService {
 
     public void sendResetPasswordLink(String email, String token) throws IOException {
 
-        System.out.println(token);
-
         String href = "<b><a href='http://localhost:4200/user/reset-password?token=" + token + "' >link</a></b>";
         String link = "<div style='color: black;'>Please click this " + href
                 + " to open the page for resetting your password.</div>";
@@ -43,9 +41,6 @@ public class SendGridService {
             request.setEndpoint("mail/send");
             request.setBody(mail.build());
             Response response = sendGridClient.api(request);
-            System.out.println(response.getStatusCode());
-            System.out.println(response.getBody());
-            System.out.println(response.getHeaders());
         } catch (IOException ex) {
             throw ex;
         }

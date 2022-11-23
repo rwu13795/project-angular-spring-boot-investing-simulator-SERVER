@@ -1,14 +1,9 @@
 package com.raywu.investingsimulator.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.raywu.investingsimulator.auth.AuthService;
 import com.raywu.investingsimulator.exception.CustomException;
-import com.raywu.investingsimulator.exception.exceptions.BadRequestException;
-import com.raywu.investingsimulator.utility.SecurityCipher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -16,7 +11,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
 
 @Component
 public class JWTFilter extends OncePerRequestFilter {
@@ -44,13 +38,9 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-        boolean shouldNotFilter = true;
-        if(path.startsWith("/api/auth/get-user-info")
-                || path.startsWith("/api/portfolio")
-                || path.startsWith("/api/auth/check-auth")) {
-            shouldNotFilter = false;
-        }
-        return shouldNotFilter;
+        return !path.startsWith("/api/auth/get-user-info")
+                && !path.startsWith("/api/portfolio")
+                && !path.startsWith("/api/auth/check-auth");
     }
 }
 

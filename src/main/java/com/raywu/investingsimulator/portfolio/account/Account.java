@@ -2,10 +2,8 @@ package com.raywu.investingsimulator.portfolio.account;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-
 
 @Entity
 @Getter

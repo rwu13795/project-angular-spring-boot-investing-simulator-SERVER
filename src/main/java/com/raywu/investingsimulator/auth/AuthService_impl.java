@@ -19,7 +19,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 
 @Service
 public class AuthService_impl implements AuthService{
@@ -66,17 +65,13 @@ public class AuthService_impl implements AuthService{
             throw new EmailTakenException();
         }
         if(!signUpRequest.passwordsMatched()) throw new PasswordsNotMatchedException();
-
-        System.out.println("email -----" + email);
-        System.out.println("password -----" + password);
-
         // ---- NOTE ---- //
         // You have to set the employee id to 0, to let Hibernate know that we are
         // create a new employee entry (because we use saveOrUpdate in the DAO)
         Account newAccount = new Account();
         newAccount.setId(0);
         newAccount.setEmail(email);
-        newAccount.setFund(100000);
+        newAccount.setFund(200000);
         newAccount.setJoinedAt(System.currentTimeMillis());
         newAccount.setCanResetPassword(false);
 
@@ -105,8 +100,6 @@ public class AuthService_impl implements AuthService{
         String email = request.getEmail();
         String oldPassword = request.getPassword();
         String newPassword = request.getNew_password();
-
-        System.out.println(email);
 
         Account existedAcct = accountService.findByEmail(email);
         if(existedAcct == null) throw new BadRequestException("Invalid email from an authenticated user!?", "email");
@@ -143,7 +136,6 @@ public class AuthService_impl implements AuthService{
         return ResponseEntity.ok().body(new CheckAuthResponse(true));
     }
 
-    // Temp code
     @Override
     public ResponseEntity<Void> generatePasswordResetLink(String email) throws IOException {
         if(email == null) throw new IncorrectEmailException();

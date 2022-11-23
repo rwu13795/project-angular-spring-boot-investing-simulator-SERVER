@@ -5,8 +5,6 @@ import com.raywu.investingsimulator.exception.ErrorResponse;
 import com.raywu.investingsimulator.portfolio.dto.TransactionType;
 import org.springframework.http.HttpStatus;
 
-
-
 public class PriceLimitException extends CustomException {
     private final HttpStatus status = HttpStatus.BAD_REQUEST;
     private final ErrorResponse errorResponse = new ErrorResponse();

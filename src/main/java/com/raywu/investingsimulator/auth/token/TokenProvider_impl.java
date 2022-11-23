@@ -1,6 +1,5 @@
 package com.raywu.investingsimulator.auth.token;
 
-import com.raywu.investingsimulator.exception.exceptions.BadRequestException;
 import com.raywu.investingsimulator.exception.exceptions.InvalidTokenException;
 import com.raywu.investingsimulator.utility.EnvVariable;
 
@@ -22,7 +21,6 @@ public class TokenProvider_impl implements TokenProvider {
 
     private final Key tokenSecret;
 
-
     @Autowired
     public TokenProvider_impl(EnvVariable env) {
         this.tokenSecret = this.convertStringToKey(env.TOKEN_SECRET());
@@ -38,9 +36,7 @@ public class TokenProvider_impl implements TokenProvider {
         switch (tokenType) {
             case ACCESS -> duration = accessTokenExpirationMS;
             case REFRESH -> duration = refreshTokenExpirationMS;
-            case PW_RESET -> {
-                duration = resetLinkTokenExpirationMS;
-            }
+            case PW_RESET -> duration = resetLinkTokenExpirationMS;
         }
 
         Date now = new Date();
@@ -60,22 +56,6 @@ public class TokenProvider_impl implements TokenProvider {
                 LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault()));
     }
 
-//    @Override
-//    public Token generateRefreshToken(String email, int id) {
-//        Date now = new Date();
-//        long duration = refreshTokenExpirationMS;
-//        Date expiryDate = new Date(now.getTime() + duration);
-//        String emailAndId = email + "_" + id;
-//
-//        String token = Jwts.builder()
-//                .setSubject(emailAndId)
-//                .setIssuedAt(now)
-//                .setExpiration(expiryDate)
-//                .signWith(tokenSecret, SignatureAlgorithm.HS256)
-//                .compact();
-//        return new Token(Token.TokenType.REFRESH, token, duration,
-//                LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault()));
-//    }
 
     @Override
     public String getUserInfoFromToken(String token) {
@@ -101,12 +81,10 @@ public class TokenProvider_impl implements TokenProvider {
         try {
             // the "Jwts.parser()" is deprecated, need to use "parserBuilder()"
             Jwts.parserBuilder().setSigningKey(tokenSecret).build().parse(token);
-//            System.out.println("validating---------"+email);
             return true;
         } catch (ExpiredJwtException | MalformedJwtException
                  | SignatureException | IllegalArgumentException
                  | DecodingException exc) {
-            System.out.println("invalid------------------");
             exc.printStackTrace();
         }
         return false;

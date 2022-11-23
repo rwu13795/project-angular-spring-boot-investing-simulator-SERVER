@@ -10,7 +10,6 @@ import com.raywu.investingsimulator.portfolio.dto.*;
 import com.raywu.investingsimulator.portfolio.transaction.entity.Transaction;
 import com.raywu.investingsimulator.portfolio.transaction.TransactionService;
 import com.raywu.investingsimulator.portfolio.transaction.entity.TransactionShortSell;
-import com.raywu.investingsimulator.portfolio.watchlist.Watchlist;
 import com.raywu.investingsimulator.portfolio.watchlist.WatchlistService;
 import com.raywu.investingsimulator.stock.price.PriceService;
 import com.raywu.investingsimulator.stock.price.dto.ShortQuote;

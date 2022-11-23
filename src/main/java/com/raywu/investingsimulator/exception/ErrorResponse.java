@@ -1,6 +1,5 @@
 package com.raywu.investingsimulator.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
@@ -12,6 +11,6 @@ public class ErrorResponse {
     public ErrorResponse() {}
 
     public enum ErrorField {
-        password, email, new_password, confirm_password, token
+        password, email, confirm_password, token
     }
 }
