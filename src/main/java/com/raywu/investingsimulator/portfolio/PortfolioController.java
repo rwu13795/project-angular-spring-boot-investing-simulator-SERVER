@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/portfolio")
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class PortfolioController {
 
     @Autowired

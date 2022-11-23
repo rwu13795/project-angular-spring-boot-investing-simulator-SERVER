@@ -13,7 +13,6 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class AuthController {
     @Autowired
     private AuthService authService;
