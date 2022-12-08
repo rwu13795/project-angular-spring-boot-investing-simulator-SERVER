@@ -24,10 +24,7 @@ public class AssetService_impl implements AssetService {
     @Override
     public Asset findAssetBySymbol(int userId, String symbol) {
         Optional<Asset> asset = assetRepository.findAssetBySymbol(userId, symbol);
-        if(asset.isPresent()) {
-            return asset.get();
-        }
-        return null;
+        return asset.orElse(null);
     }
 
     @Override

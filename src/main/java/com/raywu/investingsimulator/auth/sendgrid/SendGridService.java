@@ -25,9 +25,11 @@ public class SendGridService {
 
     public void sendResetPasswordLink(String email, String token) throws IOException {
 
-        String href = "<b><a href='http://localhost:4200/user/reset-password?token=" + token + "' >link</a></b>";
+
+        String href = "<b><a href='https://www.trading-simulator.live/user/reset-password?token=" + token + "' >link</a></b>";
         String link = "<div style='color: black;'>Please click this " + href
-                + " to open the page for resetting your password.</div>";
+                + " to open the page for resetting your password.</div>" +
+                "<div>This link will expire in <b>10 minutes</b>.</div>";
 
         Email from = new Email("rwu13795.work@gmail.com");
         String subject = "[Investing Simulator] Reset Password Link";

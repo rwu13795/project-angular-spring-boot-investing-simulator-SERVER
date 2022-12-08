@@ -43,6 +43,7 @@ public class SecurityConfig {
                         "https://www.trading-simulator.live"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE", "OPTIONS"));
+        // need to allow any header for the pre-flight request sent from the client
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
