@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
@@ -19,9 +20,17 @@ public class StockService_impl implements StockService {
         String FMP_API_URL = env.FMP_API_URL();
         this.FMP_API_KEY = env.FMP_API_KEY();
 
+        // increase the WebClient default "maxInMemorySize"
+        final int size = 16 * 1024 * 1024;
+        final ExchangeStrategies strategies = ExchangeStrategies.builder()
+                .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(size))
+                .build();
+
         webClient = webClientBuilder
                 .baseUrl(FMP_API_URL)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                // increase the WebClient default "maxInMemorySize"
+                .exchangeStrategies(strategies)
                 .build();
     }
     @Override
