@@ -1,6 +1,7 @@
 package com.raywu.investingsimulator.stock.stock;
 
 import com.raywu.investingsimulator.stock.stock.dto.SearchResult;
+import com.raywu.investingsimulator.stock.stock.dto.StockNews;
 import com.raywu.investingsimulator.utility.EnvVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -24,7 +25,7 @@ public class StockService_impl implements StockService {
                 .build();
     }
     @Override
-    public String fetchNews(String symbol, String limit) {
+    public StockNews[] fetchNews(String symbol, String limit) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v3/stock_news")
@@ -35,7 +36,7 @@ public class StockService_impl implements StockService {
                         .queryParam("apikey", FMP_API_KEY)
                         .build())
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(StockNews[].class)
                 .block();
     }
     @Override

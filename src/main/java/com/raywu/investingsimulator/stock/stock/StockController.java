@@ -1,6 +1,7 @@
 package com.raywu.investingsimulator.stock.stock;
 
 import com.raywu.investingsimulator.stock.stock.dto.SearchResult;
+import com.raywu.investingsimulator.stock.stock.dto.StockNews;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +13,7 @@ public class StockController {
     private StockService_impl stockService;
 
     @GetMapping("/news")
-    public String fetchNews(@RequestParam String symbol, @RequestParam String limit) {
+    public StockNews[] fetchNews(@RequestParam String symbol, @RequestParam String limit) {
 
         return stockService.fetchNews(symbol, limit);
     }
