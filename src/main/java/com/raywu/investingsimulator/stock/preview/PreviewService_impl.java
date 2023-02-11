@@ -49,6 +49,9 @@ public class PreviewService_impl implements PreviewService {
                         .bodyToMono(PeersList[].class)
                         .block();
 
+        // some stocks do not have any peers, so the PeersList[] will be empty
+        if(list.length < 1) return null;
+
         return this.fetchPeersInfo(StringUtils.join(list[0].getPeersList(), ','));
     }
 
